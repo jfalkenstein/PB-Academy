@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<extension type="library" method="upgrade" version="3.2">
+    <name>P&amp;B Academy Library</name>
+    <libraryname>pbacademylib</libraryname>
+    <author>Jon Falkenstein</author>
+    <createDate>April, 2016</createDate>
+    <description>This library supports the P&amp;B Academy</description>
+    <files>
+        <folder>PbAcademy</folder>
+    </files>
+</extension>

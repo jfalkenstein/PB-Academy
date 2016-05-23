@@ -1,0 +1,13 @@
+{
+    "name": "vendor/mod-board-university",
+    "description": "Description of project mod_BoardUniversity.",
+    "authors": [
+        {
+            "name": "jfalkenstein",
+            "email": "your@email.here"
+        }
+    ],
+    "require": {
+        "joomla/joomla-platform": 13.1
+    }
+}

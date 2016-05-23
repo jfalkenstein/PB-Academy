@@ -1,0 +1,432 @@
+/* 
+    Created on : Apr 5, 2016, 1:49:10 PM
+    Author     : jfalkenstein
+*/
+.wholePage #pbTitle{
+    font-size: 3em !important;
+}
+#s5_component_wrap{border: none !important;}
+.mainBody #mainBodyTitle{
+    text-align: center;
+    font-size: 2.1em !important;
+    line-height: 1.2;
+}
+#BottomMenu{
+    display: none;
+}
+.leftMenu{
+    float:left;
+    margin:1%;
+    background-color: #D8E6F3;
+    width:20%;
+    border-radius: 10px;
+    margin-top:5%;
+    padding-bottom: 5px;
+    box-shadow: 2px 2px 5px #114881;
+}
+.leftMenu h3{text-align: center;}
+.leftMenu ul li{
+    list-style-type: none;
+    padding-top: 1%;
+    padding-bottom: 1%;
+    color:#114881;
+    font-size: .9em;
+}
+
+.leftMenu ul li,
+#BottomMenu ul li{
+    list-style-image: url('gradbullet.png');
+    list-style-position: outside;
+    margin-left: 15%;
+}
+.leftMenu .count,
+#BottomMenu .count{
+    color: #114881;
+    font-weight: normal !important;
+}
+.leftMenu a, 
+#BottomMenu a{
+    color: #1E66B0 !important;
+}
+.seeMore{
+    float:right;
+    margin-right:10%;
+    font-size: 1em;
+}
+.mainBody{
+    float:right;
+    margin:1%;
+    width:75%;
+}
+#recentLessons{
+    overflow: hidden;
+}
+.latestLesson{
+    overflow:auto;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+.latestLesson img{
+    width: 100%;
+}
+.AllCategories,
+.AllSeries{
+    width:100%;
+    overflow:auto;
+}
+.headerImage{
+    float:left;
+    width: 52%;
+}
+.headerSection{
+    overflow: auto;
+    margin-bottom: 5%;
+}
+.headerDetails{
+    float:right;
+    width: 40%;
+    margin-left: 5%;
+    border-radius: 10px;
+    background-color: #D6DBAA;
+    padding: 1%;
+    margin-bottom: 5%;
+}
+.mainBody .shadowbox img,
+.mainBody .headerImage img{
+    border-radius: 10px;
+}
+
+.mainBody .superimpose{
+    position: absolute;
+    bottom:5%;
+    right: 5%;
+    width: 10%;
+    opacity: .4;
+    filter: alpha(opacity=40);
+}
+
+.mainBody .lessonList{
+    overflow: auto;
+}
+
+.latestLessonDetails{
+    float:right;
+    margin-top: 5px;
+    width: 27%;
+}
+
+.latestLessonCategory, 
+.latestLessonSeries, 
+.latestLessonDescrip{
+    font-size: 1em;
+}
+
+.latestLessonDescrip{
+    width: 70%;
+    float:left;
+    margin-right: 2.5%;
+    margin-top: 5px;
+} 
+.latestLessonCategory,
+.latestLessonSeries{
+    font-style: italic;
+}
+
+.mainBody .shadowbox{
+    border-radius: 10px;
+    position:relative;
+}
+.mainBody #otherRecentLessons{
+    margin-top: 8%;
+}
+
+.mainBody .thumbtitle{
+    text-align: center;
+}
+.mainBody a{
+    color: #114881 !important;
+}
+.mainBody #nextPage{
+    float:right;
+}
+.mainBody #prevPage{
+    float:left;
+}
+.mainBody #CategoryLessons,
+.mainBody #SeriesLessons{
+    overflow: auto;
+    margin-bottom: 5%;
+}
+
+.mainBody h5{
+    font-weight: bold;
+}
+.mainBody h3{
+    color: #114881;
+}
+.lessonThumb,
+.catThumbBig,
+.serBigThumb{
+    width: 30.333%;
+    height: 260px;
+    max-height: 250px;
+    overflow: hidden;
+}
+.catThumb{
+    width: 21%;
+    height: 200px;
+}
+.lessonThumb,
+.catThumb,
+.catThumbBig,
+.serBigThumb{
+    display: block;
+    float:left;
+    padding:10px;
+    margin: 0 auto;
+}
+.catFooter, .thumbFooter, .serFooter{
+    padding-left: 2px;
+    padding-right: 2px;
+    padding-top: 2%;
+}
+.catThumb .catFooter{
+    text-align: center;
+    font-weight: bold;
+    color:#114881;
+}
+
+.catThumbBig .catFooter,
+.serBigThumb .serFooter{
+    text-align: left;
+    color: #114881;
+    overflow: hidden;
+}
+
+
+.video-container{
+    position:relative;
+    padding-top:35px;
+    height:0;
+    margin-bottom: 2%;
+}
+.video-container iframe{
+    position:absolute;
+    top:0;
+    left:0;
+    width: 100%;
+    height:100%;
+}
+
+#AdditionalContent{
+    overflow: auto;
+}
+.NavBar{
+    margin-top: 5%;
+    float: left;
+    margin-bottom: 5%;
+    width: 100%;
+    position: relative;
+}
+.NavBar .navDiv{
+    width: auto;
+    padding:2%;
+    font-weight: bold;
+    float:left;
+}
+.NavBar a{
+    color: #114881 !important;
+    text-transform: uppercase;
+}
+.NavBar .nav-name{
+    font-style: italic;
+}
+.NavBar-tooltip{
+    display:none;
+    position:absolute;
+    overflow: visible;
+    font-weight: normal;
+    font-size: 1.2em;
+    color:#114881;
+    top:-1em;
+}
+
+[class*=icon-]{
+    color: #114881 !important;
+}
+
+#MainLesson #DetailsBox {
+    float:right;
+    width: auto;
+    max-width: 25%;
+    margin-left: 1%;
+    border-radius: 10px;
+    background-color: #D6DBAA;
+    padding: 1%;
+    margin-bottom: 5%;
+}
+#MainLesson #DetailsBox{
+    font-style: italic;
+    color:#114881;
+    box-shadow: 2px 2px 5px;
+    margin-right: 6px !important;
+}
+.detLabel{
+    font-weight: bold;
+}
+.detDate{
+    font-style: italic;
+}
+#MainLesson #LessonDescription{
+    width: 70%;
+    margin-top: 5px;
+    border-top: 5px solid black;
+}
+#MainLesson #DetailsBox div{
+    margin-bottom: 2%;
+}
+#MainLesson #DetailsBox a{
+    color: #114881 !important;
+}
+#urlEmbed{
+    width: 90%;
+}
+#urlEmbed iframe{
+    display: block;
+    width: 100%;
+}
+#coverImage{
+    border-radius: 10px;
+}
+
+@media (max-width:970px){
+    .lessonThumb{
+        width: 46% !important;
+        height: 250px;
+    }
+    #lastLesson{
+        margin-left: 23%
+    }
+    .catThumbBig,
+    .serBigThumb{
+        width: 29.333%
+    }
+    .catThumb{
+        width:29.333% !important;
+    }
+    .leftMenu ul li{
+        font-size: 1em;
+    }
+@media (max-width:760px){
+    .lessonThumb{
+        width: 44% !important;
+        height:200px;
+    }
+    #lastLesson{
+        margin-left: 22%
+    }
+    .catThumb, .catThumbBig, .serBigThumb{
+        width:44.333% !important;
+    }
+    .leftMenu ul li{
+        font-size: 1.2em;
+        padding-bottom: 3%;
+    }
+    .leftMenu{
+        width:25%;
+    }
+    .mainBody{
+        width:70%
+    }
+    .headerImage{
+        width:100%;
+        float:none;
+        margin-bottom: 5%;
+        
+    }
+    .headerDetails{
+        width:auto;
+        float:none;
+        margin: 0 auto;
+        padding:2%;
+    }
+    #MainLesson #DetailsBox{
+        max-width: 35%;
+    }
+    #MainLesson #LessonDescription{
+        width: 60%;
+    }
+    .NavBar div{
+        padding-top: 12px !important;
+    }
+}
+@media (max-width: 625px){
+    .mainBody{
+        width:100%;
+    }
+    .lessonThumb{
+        width:95% !important;
+        height: 100%;
+        max-height: 100%;
+    }
+    #lastLesson{
+        margin-left:auto;
+    }
+    .leftMenu{
+        display:none;
+    }
+    #BottomMenu{
+        display:table;
+        margin: 0 auto;
+        background-color: #D8E6F3;
+        width: auto;
+        border-radius: 10px;
+        padding: 6%;
+    }
+    #BottomMenu h3{
+    text-align: center;
+    font-size: 1.6em;
+    }
+    #BottomMenu ul li{
+    list-style-type: none;
+    padding-top: 1%;
+    padding-bottom: 5%;
+    color:#114881;
+    font-size: 1.3em;
+    margin: 0 auto;
+    }
+    .latestLessonDescrip{
+        display: none;
+    }
+    .latestLessonDetails{
+        float:none;
+        width: 100%;
+    }
+    #MainLesson #DetailsBox{
+        max-width: 85%;
+        margin: 0 auto;
+        float: none;
+        margin-bottom: 5%;
+        width: 90%;
+        display: table;
+        padding: 3% 7% 3% 7%;
+    }
+    #MainLesson #LessonDescription{
+        text-align: center;
+        width: 100%;
+    }
+    
+}
+@media (max-width:444px){
+    #categories{
+        display:none;
+    }
+    .catThumbBig, .serBigThumb{
+        width: 94% !important;
+        height: 100%;
+        display: inline-table;
+    }
+    .navDiv{
+
+    }
+}
