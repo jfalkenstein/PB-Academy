@@ -25,6 +25,7 @@ if(is_a($this, 'IAllSeriesView')){
                     <?php 
                         echo substr($ser->Description, 0, 100);
                         if(strlen($ser->Description) > 100) echo '...';
+                        echo ' (' . $ser->LessonCount() . ')';
                     ?>
                 </div>
                 <?php endif; ?>
