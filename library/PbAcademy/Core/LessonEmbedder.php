@@ -207,7 +207,7 @@ class LessonEmbedder{
                     .  'src="' . $url . '" '
                     .  'width="555" '
                     .  'height="600" '
-                    .  'scrolling="yes"'
+                    .  'scrolling="yes">'
                 .  '</iframe>'
                 .'</div>';
         return $code;
