@@ -142,6 +142,7 @@
 
 .mainBody .thumbtitle{
     text-align: center;
+    height: 50px;
 }
 .mainBody a{
     color: #114881 !important;
