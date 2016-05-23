@@ -290,7 +290,8 @@
     color: #114881 !important;
 }
 #urlEmbed{
-    width: 90%;
+    width: 100%;
+    margin-bottom: 5%;
 }
 #urlEmbed iframe{
     display: block;
