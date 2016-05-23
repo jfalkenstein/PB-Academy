@@ -1,12 +1,18 @@
 <?php
 
 /**
- * Description of BaseController
+ * This is the base controller used by subcontrollers, mostly for AJAX functionality.
  *
  * @author jfalkenstein
  */
 class BaseController extends JControllerLegacy {
     
+    /**
+     * This is passed around between controllers, models, and views, containing
+     * the necessary parameters. Generally input (get/post) variables will be
+     * put in the configArray.
+     * @var Array $configArray 
+     */
     protected $configArray = [];
     public function __construct($config = array()) {
         $this->configArray = $config;
