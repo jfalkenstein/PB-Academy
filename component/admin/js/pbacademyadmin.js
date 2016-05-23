@@ -24,7 +24,12 @@ var PB = (function(){
      */
     var ajax = (function(){
         //Private members
-        function successCB(data,textStatus,jqXHR){
+        
+        /**
+         * This is the default success callback for sendForm.
+         * @param {type} data
+         */
+        function successCB(data){
             ajax.hideLoadingImage('formContainer');
             if(data.success === true){
                 editorResources.showSuccessfulMessage();
@@ -32,12 +37,23 @@ var PB = (function(){
                 editorResources.showErrorMessage();
             }
         };
+        
+        /**
+         * This is the default error callback for sendForm.
+         * @returns {undefined}
+         */
         function errorCB(jqXHR, textStatus, errorThrown){
             ajax.hideLoadingImage('formContainer');
             editorResources.showErrorMessage('Error: ' + errorThrown);
         };
         //Internal members:
         return {      
+            /**
+             * Wrapper for jQuery ajax get call.
+             * @param {string} path The url for the ajax request
+             * @param {function} success The callback to perform onSuccess.
+             * @param {function} error onError callback
+             */
             loadJSON: function(path,success,error){
                 jQuery.ajax({
                     url: path,
@@ -47,6 +63,14 @@ var PB = (function(){
                     error: error
                     });
             },
+            
+            /**
+             * Wrapper for jQuery ajax post call.
+             * @param {string} url The url for the ajax request
+             * @param {object} dataObject The object to send via Post
+             * @param {function} success The callback to perform onSuccess.
+             * @param {function} error onError callback
+             */
             sendForm: function(url, dataObject, success, error){
                 jQuery.ajax({
                     url: url,
@@ -58,6 +82,11 @@ var PB = (function(){
                     type: 'POST'
                 });
             },
+            
+            /**
+             * Displays a loading image within the specified div id.
+             * @param {string} divId
+             */
             displayLoadingImage: function(divId){
                 var div = document.getElementById(divId);
                 var img = document.createElement('img');
@@ -66,6 +95,10 @@ var PB = (function(){
                 img.style.width = '50px';
                 div.appendChild(img);
             },
+            
+            /**
+             * Removes all instances of the loading image from the dom
+             */
             hideLoadingImage: function(){
                 jQuery('#loading').remove();
             }
@@ -119,9 +152,19 @@ var PB = (function(){
             box.append(buttonsDiv);
             showLightBox(box);
         };
+        
+        /**
+         * This will close the lightbox window.
+         */
         function closePromptBox(){
             jQuery('.black_overlay, .white_content').remove();        
         };
+        
+        /**
+         * This will update the promptbox text with alternate text and buttons.
+         * @param {buttonDef[]} buttonDefs
+         * @param {string} text
+         */
         function updatePromptBox(buttonDefs, text){
             jQuery('#lightBoxContent').text(text);
             jQuery('.lightBoxButton').remove();
@@ -181,7 +224,14 @@ var PB = (function(){
         };
     }());
     
-    //Internally accessible function definition, but not exposed beyond the PB namespace.
+    /**
+     * Internally accessible function definition, but not exposed beyond the PB namespace.
+     * @param {string} buttonId The id for the button
+     * @param {string} buttonText the text to be displayed on the button
+     * @param {function} buttonAction The callback to be performed onClick.
+     * @param {object} buttonData An object with data to be passed along in the onClick handler.
+     * @returns {pbacademyadmin_L18.ButtonDef}
+     */
     function ButtonDef(buttonId, buttonText,buttonAction, buttonData){
         this.ButtonId = buttonId;    
         this.ButtonText = buttonText;
@@ -194,28 +244,35 @@ var PB = (function(){
      * This is the code supporting the select to delete functionality. 
      */
     var selectionTool = (function(){
+        
+        /**
+         * This will add delete checkboxes to every row to the listBody.
+         * @param {jQuery} jqListBody
+         * @param {int} whichTableEnum
+         */
         function addDeleteCheckBoxes(jqListBody, whichTableEnum){
             var rows = jqListBody.find('tr');
-            rows.each(function(index, el){
+            rows.each(function(index, el){ //For each row in the listBody...
                 var row = jQuery(el);
                 var td = jQuery('<td></td>');
                 var box = jQuery('<input type="checkbox" class="selectCheck">');
-                if(!row.data('deleteBlocked')){
-                    box.change(function(e){
-                        var row = jQuery(e.delegateTarget).parents('tr');
+                if(!row.data('deleteBlocked')){ //If the row isn't tagged with the deleteBlocked data attribute...
+                    box.change(function(e){ //Add change event handler:
+                        var row = jQuery(e.delegateTarget).parents('tr'); //Select parent row of the checkbox
                         var tableRef = whichTableEnum;
-                        var itemRef = row.data('id'); 
-                        if(e.delegateTarget.checked){
-                            PB.adminHome.SelectedItems.push({
+                        var itemRef = row.data('id');  
+                        if(e.delegateTarget.checked){ //If the checkbox is checked...
+                            PB.adminHome.SelectedItems.push({ //add an object to the selectedItems array
                                 Table: tableRef,
                                 IdToDelete: itemRef,
                                 Name: row.data('name'),
                                 DeleteLink: row.data('deleteLink')
                             });
-                        }else{
+                        }else{ //If the box is NOT checked...
                             var items = PB.adminHome.SelectedItems;
                             var newArray = [];
                             var count = items.length;
+                            //Remove the item from the SelectedItems array.
                             for(var i = 0; i < count; i++){
                                 if(!(items[i].Table === tableRef && items[i].IdToDelete === itemRef)){
                                     newArray.push(items[i]);
@@ -223,16 +280,21 @@ var PB = (function(){
                             }
                             PB.adminHome.SelectedItems = newArray;
                         }
-                        evaluateSelections();
+                        evaluateSelections(); //Evaluate selections
                     });
-                    td.append(box);                
-                    row.append(td);
+                    td.append(box); //Add the checkbox to the td.    
+                    row.append(td); //Add the td to the row.
                 };
             });
         };
 
+        /**
+         * Evaluates the checkbox selections.
+         * @returns {undefined}
+         */
         function evaluateSelections(){
             var name = "start", i = 0, sections = [];
+            //Create array of arrays, with one array per table.
             while (name){
                 var divName = adminHome.getSectionDivName(i);
                 if(divName){
@@ -241,11 +303,14 @@ var PB = (function(){
                 i++;
                 name = divName;
             }
-
+            
+            //For each table, add the selected items objects to its array.
             for(var i in PB.adminHome.SelectedItems){
                 var item = PB.adminHome.SelectedItems[i];
                 sections[item.Table].push(item.IdToDelete);
             }
+            //For each table, if there are any items selected, show the "delete selected" button.
+            //If there are none selected, hide the "delete selected" button.
             for(var i in sections){
                 if(sections[i].length > 0){
                     showDeleteSelectedButton(i);
