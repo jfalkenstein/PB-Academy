@@ -25,6 +25,7 @@ if(is_a($this, 'IAllCategoriesView')){
                     <?php 
                         echo substr($cat->Description, 0, 100);
                         if(strlen($cat->Description) > 100) echo '...';
+                        echo ' (' . $cat->LessonCount() . ')';
                     ?>
                 </div>
                 <?php endif; ?>
