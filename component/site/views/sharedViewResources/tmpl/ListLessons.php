@@ -25,8 +25,8 @@ if($this->PageNumber === 1){
 ?>
 <?php if($this->PageNumber != 1): ?>
     <h3>Page <?php echo $this->PageNumber; ?></h3>
-    <div class="lessonList">
 <?php endif;?>
+    <div class="lessonList">
 <?php 
     for($i = $ViewStart; $i < $ViewEnd + 1;$i++) :
         /* @var $currentLesson Lesson */
