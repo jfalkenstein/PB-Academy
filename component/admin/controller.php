@@ -75,4 +75,5 @@ class PbAcademyController extends JControllerLegacy
         $class = (($className) ? $className : 'PbAcademyView' . ucfirst($viewName));
         return new $class($this->configArray);
     }
+    
 }
