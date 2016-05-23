@@ -143,6 +143,9 @@
 .mainBody .thumbtitle{
     text-align: center;
     height: 50px;
+    display:table-cell;
+    vertical-align: bottom;
+    padding-bottom: 10px;
 }
 .mainBody a{
     color: #114881 !important;
@@ -168,8 +171,8 @@
 .lessonThumb,
 .catThumbBig,
 .serBigThumb{
-    width: 30.333%;
-    height: 260px;
+    width: 29.333%;
+    height: 250px;
     max-height: 250px;
     overflow: hidden;
 }
@@ -181,8 +184,8 @@
 .catThumb,
 .catThumbBig,
 .serBigThumb{
-    display: block;
-    float:left;
+    display: inline-block;
+    /*float:left;*/
     padding:10px;
     margin: 0 auto;
 }
