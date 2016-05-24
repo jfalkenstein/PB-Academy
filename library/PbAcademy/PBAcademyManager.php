@@ -293,7 +293,7 @@ class PBAcademyManager {
      * @param int $id - The id of the lesson you desire to use.
      * @param type $name Description
      */
-    public function DeleteLession($id){
+    public function DeleteLesson($id){
         $success = $this->repo->Lessons->Delete($id);
         if(!$success){
             $this->ErrorMessages[] = 'Lesson with id of ' . $id . ' was not able to be deleted.';
