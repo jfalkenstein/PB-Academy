@@ -538,6 +538,7 @@ var PB = (function(){
             var e = WhichTableEnum.Lessons;
             var headings = ["Lesson Title", "Published" ,"Id", "Date Published", "School Name", "Series Name", "Edit", "Delete"];
             makeTable(lessons, e, headings);
+            //These are used by the list.js search field
             var valuesArray = ['title','id', 'date','school','series'];
             makeList(valuesArray, e);
             ajax.hideLoadingImage();
@@ -555,6 +556,7 @@ var PB = (function(){
             var listBody = table.find('.list');
             listBody = appendLessons(listBody, lessons, true);
             selectionTool.addDeleteCheckBoxes(listBody, WhichTableEnum.Modal);
+            //These are used by the list.js search field
             var valuesArray = ['title','id', 'date','school','series'];
             showPopupLessonsTable(table);
             makeList(valuesArray, WhichTableEnum.Modal);
@@ -562,7 +564,7 @@ var PB = (function(){
         };
         
         /**
-        * This will display a table in a new window.
+        * This will display a table in a lightbox.
         * @param {jQuery} table jQuery object
         * @returns {undefined}
         */
@@ -574,6 +576,7 @@ var PB = (function(){
             box.append(closeBtn);
             box.append('<input type="text" class="search form-control" placeholder="Search Lessons" /><br>');
             var lessonsDiv = getSectionDivName(PB.adminHome.WhichTableEnum.Lessons);
+            //Make a copy of the buttons in the lessonsDiv
             var sortButtons = jQuery('#' + lessonsDiv + ' .sort').clone();
             box.append(sortButtons);
             box.append('<ul class="pagination paginationTop"></ul>');
@@ -592,7 +595,8 @@ var PB = (function(){
            var e = WhichTableEnum.Series;
            var headings = ["Series Name", "Id", "# Lessons","View Lessons", "Edit", "Delete"];
            makeTable(series, e, headings);
-           var valuesArray = ['name','lessons'];
+           //These are used by the list.js search field
+            var valuesArray = ['name','lessons'];
            makeList(valuesArray, e);
         };
 
@@ -604,6 +608,7 @@ var PB = (function(){
             var e = WhichTableEnum.Schools;
             var headings = ["School Name", "Id", "# Lessons","View Lessons", "Edit", "Delete"];
             makeTable(schools, e, headings);
+            //These are used by the list.js search field
             var valuesArray = ['name','lessons'];
             makeList(valuesArray, e);
         };
@@ -619,6 +624,7 @@ var PB = (function(){
             var table = makeTableBase(headingsArray);
             var listBody = table.find('.list');
             listBody = appendData(whichTableEnum,data,listBody);
+            //Add the table as a data tag to the rows within it.
             jQuery(listBody).find('tr').data('table', whichTableEnum);
             selectionTool.addDeleteCheckBoxes(listBody, whichTableEnum);
             ajax.hideLoadingImage();
@@ -629,7 +635,7 @@ var PB = (function(){
          * This creates the basic structure of the table, with the header row
          * populated by the passed-in array. It will then return that table.
          * @param {[]string} rowHeadingsArray
-         * @returns {jQuery}
+         * @returns {jQuery} The table to be appended to.
          */
         function makeTableBase(rowHeadingsArray){
             var table = jQuery('<table></table>').addClass('listTable');
@@ -671,13 +677,14 @@ var PB = (function(){
          * @param {jQuery} listBody
          * @param {[]Lesson} lessons
          * @param {bool} modal specifies whether or not this parameter is a modal window.
-         * @returns {jQuery}
+         * @returns {jQuery} The list body with all rows appended.
          */
         function appendLessons(listBody, lessons, modal){
             var modal = typeof modal !== 'undefined' ? modal : false;
             var table = modal ? WhichTableEnum.Modal : WhichTableEnum.Lessons;
-            for(var key in lessons){
+            for(var key in lessons){ //Loop through the lessons in the data object. 
                 var lesson = lessons[key];
+                //Show whether or not the lesson is published.
                 var publishedIcon = (lesson.Published) ? '<span class="icon-publish"></span>Yes' : '<span class="icon-unpublish"></span>No';
                 var cells = [];
                 var row = jQuery('<tr></tr>')
@@ -694,9 +701,9 @@ var PB = (function(){
                         + lesson.SeriesName 
                         + ((lesson.SeriesName !== "") ? ' (#' + lesson.TruePosition + ')' : "") 
                         + '</td>').addClass("series");
-                cells[6] = makeEditTd(lesson.EditLink, modal);
-                cells[7] = makeDeleteTd();
-                addDeleteClickEvent(
+                cells[6] = makeEditTd(lesson.EditLink, modal); //Add edit icon as link
+                cells[7] = makeDeleteTd(); //Add delete icon
+                addDeleteClickEvent( //Add delete click even to the icon.
                     cells[7], 
                     lesson.DeleteLink, 
                     lesson.Id, 
@@ -704,10 +711,10 @@ var PB = (function(){
                     table,
                     'lesson'
                 );
-                for(var i in cells){
+                for(var i in cells){ //Append all cells to the row.
                     row.append(cells[i]);
                 };
-                listBody.append(row);
+                listBody.append(row); //Append the row to the listBody passed in.
             };
             return listBody;
         };
@@ -717,7 +724,7 @@ var PB = (function(){
          * then return that listBody.
          * @param {jQuery} listBody
          * @param {[]LessonSeries} allSeries
-         * @returns {jQuery}
+         * @returns {jQuery} The list body with all rows appended to it.
          */
         function appendSeries(listBody, allSeries){
             for(var key in allSeries){
@@ -731,10 +738,10 @@ var PB = (function(){
                 cells[0] = jQuery('<td>' + series.SeriesName + '</td>').addClass("name");
                 cells[1] = jQuery('<td>' + series.Id + '</td>').addClass("id");
                 cells[2] = jQuery('<td>' + series.LessonCount + '</td>').addClass("lessons");
-                cells[3] = makeViewLessonsTd();
-                cells[4] = makeEditTd(series.EditLink);
-                cells[5] = makeDeleteTd();
-                addDeleteClickEvent(
+                cells[3] = makeViewLessonsTd(); //Add icon to view associated lessons.
+                cells[4] = makeEditTd(series.EditLink); //Add edit icon as link
+                cells[5] = makeDeleteTd(); //Add delete icon
+                addDeleteClickEvent( //Add delete click action on icon.
                     cells[5], 
                     series.DeleteLink, 
                     series.Id, 
@@ -742,24 +749,25 @@ var PB = (function(){
                     WhichTableEnum.Series,
                     'series'
                 );
-                addViewLessonsClickEvent(
+                addViewLessonsClickEvent( //Add view lessons click even to icon.
                     cells[3],
                     series.ViewLessonsLink
                 );
-                for(var i in cells){
+                for(var i in cells){ //append all cells to row
                     row.append(cells[i]);
                 };
-                listBody.append(row);
+                listBody.append(row); //append row to listbody
             };
-            return listBody;
+            return listBody; 
         };
         
         /**
          * This will append rows for each school to the passed in listBody,
-         * then return that listBody.
+         * then return that listBody. Function is almost identical to appendSeries.
+         * See comments within that function for explanation, except where commented below.
          * @param {jQuery} listBody
          * @param {[]Category} schools
-         * @returns {jQuery}
+         * @returns {jQuery} The list body with all rows appended to it.
          */
         function appendSchools(listBody, schools){
 
@@ -776,6 +784,14 @@ var PB = (function(){
                 cells[2] = jQuery('<td>' + school.LessonCount + '</td>').addClass("lessons");
                 cells[3] = makeViewLessonsTd();
                 cells[4] = makeEditTd(school.EditLink);
+                /* If the school has lessons, it cannot be deleted. Doing so would delete the
+                 * the associated lessons. Therefore, if the school has lessons, it will display
+                 * "has lessons" and have the "deletePrevented" class on it and the 'deleteBlocked'
+                 * data attribute.
+                 * 
+                 * If the school does not have any lessons, then deletion is permitted and the icon
+                 * will be displayed and the delete event added to the icon.                 * 
+                 */
                 if(school.LessonCount > 0){
                     cells[5] = jQuery('<td> Has Lessons</td>').addClass('deletePrevented');
                     row.data('deleteBlocked', true);
@@ -937,7 +953,8 @@ var PB = (function(){
 
         /**
           * This will take the pseudo-enum value from WhichTableEnum and use
-          * that to fill out the table contents.
+          * that to fill out the table contents. This is the function called from
+          * the button click.
           * @param {int} WhichTableEnum
           */
          function fillTable(WhichTableEnum){
@@ -979,6 +996,7 @@ var PB = (function(){
           */
          function tabToggle(idClicked){
              var buttons = jQuery('.menuBarButton');
+             //Bold only the item clicked, make others normal.
              for(var i=0; i < buttons.length; i++){
                  if(buttons[i].id === idClicked){
                      jQuery(buttons[i]).css('font-weight','bold');
@@ -987,7 +1005,7 @@ var PB = (function(){
                  }
              }
              var div;
-             switch(idClicked){
+             switch(idClicked){ //Get the divname that corresponds with the button clicked.
                  case 'manageLessons':
                      div = jQuery('#lessonsDiv');
                      break;
@@ -1001,6 +1019,7 @@ var PB = (function(){
                      break;
              }
              var divs = jQuery('.manageTab');
+             //Show the table selected; hide the rest;
              for(i=0; i < divs.length; i++){
                  if(divs[i].id === div.attr('id')){
                      jQuery(divs[i]).css('display','block');
