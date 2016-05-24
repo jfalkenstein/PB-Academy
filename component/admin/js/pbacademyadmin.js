@@ -1360,6 +1360,11 @@ var PB = (function(){
             fields: {},
             values: {}
         };
+        /**
+        * This will return a single object with a values field (from the
+        * captured form, strigified to json) and the token populated by the server.
+        * @returns {object}
+        */
         function makeRequest(){
             var request = {};
             var token = editorResources.getToken();
@@ -1367,6 +1372,11 @@ var PB = (function(){
             request[token] = "1";
             return request;
         };    
+        /**
+        * Captures all the various fields and values on the form and adds 
+        * them to the form object for later submission.
+        * @returns {undefined}
+        */
         function captureForm(){
             var set = function(id){
                 form.values[id] = jQuery('#' + id).val();
@@ -1386,6 +1396,9 @@ var PB = (function(){
             set('imagePath');
             form.formElement = jQuery('#editCategoriesForm');
         };
+        /**
+        * This function manages the form submission process from a high level.
+        */
         function submitForm(){
                 captureForm();
                 form.formElement.hide();
