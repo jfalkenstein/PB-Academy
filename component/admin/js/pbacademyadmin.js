@@ -24,7 +24,12 @@ var PB = (function(){
      */
     var ajax = (function(){
         //Private members
-        function successCB(data,textStatus,jqXHR){
+        
+        /**
+         * This is the default success callback for sendForm.
+         * @param {type} data
+         */
+        function successCB(data){
             ajax.hideLoadingImage('formContainer');
             if(data.success === true){
                 editorResources.showSuccessfulMessage();
@@ -32,12 +37,23 @@ var PB = (function(){
                 editorResources.showErrorMessage();
             }
         };
+        
+        /**
+         * This is the default error callback for sendForm.
+         * @returns {undefined}
+         */
         function errorCB(jqXHR, textStatus, errorThrown){
             ajax.hideLoadingImage('formContainer');
             editorResources.showErrorMessage('Error: ' + errorThrown);
         };
         //Internal members:
         return {      
+            /**
+             * Wrapper for jQuery ajax get call.
+             * @param {string} path The url for the ajax request
+             * @param {function} success The callback to perform onSuccess.
+             * @param {function} error onError callback
+             */
             loadJSON: function(path,success,error){
                 jQuery.ajax({
                     url: path,
@@ -47,6 +63,14 @@ var PB = (function(){
                     error: error
                     });
             },
+            
+            /**
+             * Wrapper for jQuery ajax post call.
+             * @param {string} url The url for the ajax request
+             * @param {object} dataObject The object to send via Post
+             * @param {function} success The callback to perform onSuccess.
+             * @param {function} error onError callback
+             */
             sendForm: function(url, dataObject, success, error){
                 jQuery.ajax({
                     url: url,
@@ -58,6 +82,11 @@ var PB = (function(){
                     type: 'POST'
                 });
             },
+            
+            /**
+             * Displays a loading image within the specified div id.
+             * @param {string} divId
+             */
             displayLoadingImage: function(divId){
                 var div = document.getElementById(divId);
                 var img = document.createElement('img');
@@ -66,6 +95,10 @@ var PB = (function(){
                 img.style.width = '50px';
                 div.appendChild(img);
             },
+            
+            /**
+             * Removes all instances of the loading image from the dom
+             */
             hideLoadingImage: function(){
                 jQuery('#loading').remove();
             }
@@ -119,9 +152,19 @@ var PB = (function(){
             box.append(buttonsDiv);
             showLightBox(box);
         };
+        
+        /**
+         * This will close the lightbox window.
+         */
         function closePromptBox(){
             jQuery('.black_overlay, .white_content').remove();        
         };
+        
+        /**
+         * This will update the promptbox text with alternate text and buttons.
+         * @param {buttonDef[]} buttonDefs
+         * @param {string} text
+         */
         function updatePromptBox(buttonDefs, text){
             jQuery('#lightBoxContent').text(text);
             jQuery('.lightBoxButton').remove();
@@ -181,7 +224,14 @@ var PB = (function(){
         };
     }());
     
-    //Internally accessible function definition, but not exposed beyond the PB namespace.
+    /**
+     * Internally accessible function definition, but not exposed beyond the PB namespace.
+     * @param {string} buttonId The id for the button
+     * @param {string} buttonText the text to be displayed on the button
+     * @param {function} buttonAction The callback to be performed onClick.
+     * @param {object} buttonData An object with data to be passed along in the onClick handler.
+     * @returns {pbacademyadmin_L18.ButtonDef}
+     */
     function ButtonDef(buttonId, buttonText,buttonAction, buttonData){
         this.ButtonId = buttonId;    
         this.ButtonText = buttonText;
@@ -194,28 +244,35 @@ var PB = (function(){
      * This is the code supporting the select to delete functionality. 
      */
     var selectionTool = (function(){
+        
+        /**
+         * This will add delete checkboxes to every row to the listBody.
+         * @param {jQuery} jqListBody
+         * @param {int} whichTableEnum
+         */
         function addDeleteCheckBoxes(jqListBody, whichTableEnum){
             var rows = jqListBody.find('tr');
-            rows.each(function(index, el){
+            rows.each(function(index, el){ //For each row in the listBody...
                 var row = jQuery(el);
                 var td = jQuery('<td></td>');
                 var box = jQuery('<input type="checkbox" class="selectCheck">');
-                if(!row.data('deleteBlocked')){
-                    box.change(function(e){
-                        var row = jQuery(e.delegateTarget).parents('tr');
+                if(!row.data('deleteBlocked')){ //If the row isn't tagged with the deleteBlocked data attribute...
+                    box.change(function(e){ //Add change event handler:
+                        var row = jQuery(e.delegateTarget).parents('tr'); //Select parent row of the checkbox
                         var tableRef = whichTableEnum;
-                        var itemRef = row.data('id'); 
-                        if(e.delegateTarget.checked){
-                            PB.adminHome.SelectedItems.push({
+                        var itemRef = row.data('id');  
+                        if(e.delegateTarget.checked){ //If the checkbox is checked...
+                            PB.adminHome.SelectedItems.push({ //add an object to the selectedItems array
                                 Table: tableRef,
                                 IdToDelete: itemRef,
                                 Name: row.data('name'),
                                 DeleteLink: row.data('deleteLink')
                             });
-                        }else{
+                        }else{ //If the box is NOT checked...
                             var items = PB.adminHome.SelectedItems;
                             var newArray = [];
                             var count = items.length;
+                            //Remove the item from the SelectedItems array.
                             for(var i = 0; i < count; i++){
                                 if(!(items[i].Table === tableRef && items[i].IdToDelete === itemRef)){
                                     newArray.push(items[i]);
@@ -223,16 +280,21 @@ var PB = (function(){
                             }
                             PB.adminHome.SelectedItems = newArray;
                         }
-                        evaluateSelections();
+                        evaluateSelections(); //Evaluate selections
                     });
-                    td.append(box);                
-                    row.append(td);
+                    td.append(box); //Add the checkbox to the td.    
+                    row.append(td); //Add the td to the row.
                 };
             });
         };
 
+        /**
+         * Evaluates the checkbox selections.
+         * @returns {undefined}
+         */
         function evaluateSelections(){
             var name = "start", i = 0, sections = [];
+            //Create array of arrays, with one array per table.
             while (name){
                 var divName = adminHome.getSectionDivName(i);
                 if(divName){
@@ -241,11 +303,14 @@ var PB = (function(){
                 i++;
                 name = divName;
             }
-
+            
+            //For each table, add the selected items objects to its array.
             for(var i in PB.adminHome.SelectedItems){
                 var item = PB.adminHome.SelectedItems[i];
                 sections[item.Table].push(item.IdToDelete);
             }
+            //For each table, if there are any items selected, show the "delete selected" button.
+            //If there are none selected, hide the "delete selected" button.
             for(var i in sections){
                 if(sections[i].length > 0){
                     showDeleteSelectedButton(i);
@@ -255,6 +320,10 @@ var PB = (function(){
             }
         };
 
+        /**
+         * This will add a "delete selected" button to the table specified by the enum.
+         * @param {int} whichTableEnum
+         */
         function showDeleteSelectedButton(whichTableEnum){
             var divName = adminHome.getSectionDivName(whichTableEnum);
             if(jQuery('#' + divName + ' .deleteSelected').length === 0){
@@ -265,24 +334,35 @@ var PB = (function(){
                 jQuery('#' + divName + ' .tablePlace').before(btn);
             } 
         };
-
+        
+        /**
+         * Hides the "delete selected" button in the table identified by the enum.
+         * @param {type} whichTableEnum
+         */
         function hideDeleteSelectedButton(whichTableEnum){
             var divName = adminHome.getSectionDivName(whichTableEnum);
             jQuery('#' + divName + ' .deleteSelected').remove();
         };
-
+        
+        /**
+         * Shows the delete selections light box.
+         * @param {type} whichTableEnum
+         */
         function showDeleteSelectionsLightBox(whichTableEnum){
             var contentDiv = jQuery('<div></div>');
             var promptText = jQuery('<p>Are you sure you want to delete these items? This cannot be undone.</p>');
             contentDiv.append(promptText);
+            //Get a list of selected items that match the specified table.
             var selectedItems = jQuery.grep(adminHome.SelectedItems, function(o){
                 return (parseInt(o.Table) === parseInt(whichTableEnum));
             });
             var list = jQuery('<ul></ul>');
+            //List all the items to be deleted.
             for(var i in selectedItems){
                 list.append('<li>' + selectedItems[i].Name + ' (#' + selectedItems[i].IdToDelete + ')</li>');
             }
             contentDiv.append(list);
+            //Create the button to delete the items.
             var yesDeleteBtn = new ButtonDef(
                 "yesDelete", 
                 "Yes, delete them all.", 
@@ -292,44 +372,58 @@ var PB = (function(){
                 },
                 whichTableEnum
             );
+            //create cancel button
             var noBtn = new ButtonDef("noDelete", "Never mind. Don't delete them.", function (){
                 lightBoxMaker.closePromptBox();
                 selectNone();
             });
             var btnArray = [yesDeleteBtn, noBtn];
+            //Create and display the lightbox.
             lightBoxMaker.makePromptBox(contentDiv, btnArray, "Delete all selected items?");
         };
-
+        
+        /**
+         * Issues the delete command for all selected items within the specified table
+         * @param {int} whichTableEnum
+         */
         function deleteAllSelected(whichTableEnum){
+            //Get list of selected items for the specified table.
             var selectedItems = jQuery.grep(adminHome.SelectedItems, function(o){
                 return (parseInt(o.Table) === parseInt(whichTableEnum));
             });
-            PB.adminHome.ReturnedCalls = 0;
-            PB.adminHome.CallGoal = selectedItems.length;
+            PB.adminHome.ReturnedCalls = 0; //Counter to ensure all ajax calls have responded.
+            PB.adminHome.CallGoal = selectedItems.length; //The # of calls that will be made.
             ajax.displayLoadingImage('lightBox');
-            for(var i in selectedItems){
+            for(var i in selectedItems){ //For each item to delete, issue the delete command.
                 adminHome.deleteItem(
                     selectedItems[i].DeleteLink, 
                     selectedItems[i].IdToDelete, 
-                    function(data, textStatus, jqXHR){
+                    function(data){
                         ajax.hideLoadingImage();
-                        if(!data.success){
+                        if(!data.success){ //IF the call was successful, but the server couldn't delete...
                             PB.adminHome.Error = true;
                         }
-                        PB.adminHome.ReturnedCalls++;
+                        PB.adminHome.ReturnedCalls++; //add one to the returned calls
                         finishAjaxBlast(whichTableEnum);
                     },
-                    function(jqXHR, textStatus, errorThrown){
+                    function(){ //If the call was not successful...
                         PB.adminHome.Error = true;
-                        PB.adminHome.ReturnedCalls++;
+                        PB.adminHome.ReturnedCalls++; //add one to the returned calls.
                         finishAjaxBlast(whichTableEnum);
                     }
                 );
             }
         };
-
+        
+        /**
+         * This will evaluate whether or not all ajax calls have been received.
+         * If so, it will notify the user all items have been deleted. If there
+         * was an error encountered in any of the calls, the user will be notified.
+         * @param {type} whichTableEnum
+         */
         function finishAjaxBlast(whichTableEnum){
-            if(PB.adminHome.ReturnedCalls === PB.adminHome.CallGoal){
+            //If the number of calls returned = the number of calls made...
+            if(PB.adminHome.ReturnedCalls === PB.adminHome.CallGoal){ 
                 ajax.hideLoadingImage();
                 if(PB.adminHome.Error){
                     lightBoxMaker.makeOkBox("There was an error with the deletion. Not all may have been deleted.");
@@ -340,11 +434,16 @@ var PB = (function(){
                 PB.adminHome.refreshTable(whichTableEnum);
             }
         }
-        
+        /**
+         * Deselects all items from all tables.
+         * @returns {undefined}
+         */
         function selectNone(){
             jQuery('.selectCheck').prop('checked',false);
             PB.adminHome.SelectedItems = [];
         };
+        
+        //Internally exposed methods.
         return {
             addDeleteCheckBoxes: addDeleteCheckBoxes,
             selectNone: selectNone,
@@ -439,6 +538,7 @@ var PB = (function(){
             var e = WhichTableEnum.Lessons;
             var headings = ["Lesson Title", "Published" ,"Id", "Date Published", "School Name", "Series Name", "Edit", "Delete"];
             makeTable(lessons, e, headings);
+            //These are used by the list.js search field
             var valuesArray = ['title','id', 'date','school','series'];
             makeList(valuesArray, e);
             ajax.hideLoadingImage();
@@ -456,6 +556,7 @@ var PB = (function(){
             var listBody = table.find('.list');
             listBody = appendLessons(listBody, lessons, true);
             selectionTool.addDeleteCheckBoxes(listBody, WhichTableEnum.Modal);
+            //These are used by the list.js search field
             var valuesArray = ['title','id', 'date','school','series'];
             showPopupLessonsTable(table);
             makeList(valuesArray, WhichTableEnum.Modal);
@@ -463,7 +564,7 @@ var PB = (function(){
         };
         
         /**
-        * This will display a table in a new window.
+        * This will display a table in a lightbox.
         * @param {jQuery} table jQuery object
         * @returns {undefined}
         */
@@ -475,6 +576,7 @@ var PB = (function(){
             box.append(closeBtn);
             box.append('<input type="text" class="search form-control" placeholder="Search Lessons" /><br>');
             var lessonsDiv = getSectionDivName(PB.adminHome.WhichTableEnum.Lessons);
+            //Make a copy of the buttons in the lessonsDiv
             var sortButtons = jQuery('#' + lessonsDiv + ' .sort').clone();
             box.append(sortButtons);
             box.append('<ul class="pagination paginationTop"></ul>');
@@ -493,7 +595,8 @@ var PB = (function(){
            var e = WhichTableEnum.Series;
            var headings = ["Series Name", "Id", "# Lessons","View Lessons", "Edit", "Delete"];
            makeTable(series, e, headings);
-           var valuesArray = ['name','lessons'];
+           //These are used by the list.js search field
+            var valuesArray = ['name','lessons'];
            makeList(valuesArray, e);
         };
 
@@ -505,6 +608,7 @@ var PB = (function(){
             var e = WhichTableEnum.Schools;
             var headings = ["School Name", "Id", "# Lessons","View Lessons", "Edit", "Delete"];
             makeTable(schools, e, headings);
+            //These are used by the list.js search field
             var valuesArray = ['name','lessons'];
             makeList(valuesArray, e);
         };
@@ -520,6 +624,7 @@ var PB = (function(){
             var table = makeTableBase(headingsArray);
             var listBody = table.find('.list');
             listBody = appendData(whichTableEnum,data,listBody);
+            //Add the table as a data tag to the rows within it.
             jQuery(listBody).find('tr').data('table', whichTableEnum);
             selectionTool.addDeleteCheckBoxes(listBody, whichTableEnum);
             ajax.hideLoadingImage();
@@ -530,7 +635,7 @@ var PB = (function(){
          * This creates the basic structure of the table, with the header row
          * populated by the passed-in array. It will then return that table.
          * @param {[]string} rowHeadingsArray
-         * @returns {jQuery}
+         * @returns {jQuery} The table to be appended to.
          */
         function makeTableBase(rowHeadingsArray){
             var table = jQuery('<table></table>').addClass('listTable');
@@ -572,13 +677,14 @@ var PB = (function(){
          * @param {jQuery} listBody
          * @param {[]Lesson} lessons
          * @param {bool} modal specifies whether or not this parameter is a modal window.
-         * @returns {jQuery}
+         * @returns {jQuery} The list body with all rows appended.
          */
         function appendLessons(listBody, lessons, modal){
             var modal = typeof modal !== 'undefined' ? modal : false;
             var table = modal ? WhichTableEnum.Modal : WhichTableEnum.Lessons;
-            for(var key in lessons){
+            for(var key in lessons){ //Loop through the lessons in the data object. 
                 var lesson = lessons[key];
+                //Show whether or not the lesson is published.
                 var publishedIcon = (lesson.Published) ? '<span class="icon-publish"></span>Yes' : '<span class="icon-unpublish"></span>No';
                 var cells = [];
                 var row = jQuery('<tr></tr>')
@@ -595,9 +701,9 @@ var PB = (function(){
                         + lesson.SeriesName 
                         + ((lesson.SeriesName !== "") ? ' (#' + lesson.TruePosition + ')' : "") 
                         + '</td>').addClass("series");
-                cells[6] = makeEditTd(lesson.EditLink, modal);
-                cells[7] = makeDeleteTd();
-                addDeleteClickEvent(
+                cells[6] = makeEditTd(lesson.EditLink, modal); //Add edit icon as link
+                cells[7] = makeDeleteTd(); //Add delete icon
+                addDeleteClickEvent( //Add delete click even to the icon.
                     cells[7], 
                     lesson.DeleteLink, 
                     lesson.Id, 
@@ -605,10 +711,10 @@ var PB = (function(){
                     table,
                     'lesson'
                 );
-                for(var i in cells){
+                for(var i in cells){ //Append all cells to the row.
                     row.append(cells[i]);
                 };
-                listBody.append(row);
+                listBody.append(row); //Append the row to the listBody passed in.
             };
             return listBody;
         };
@@ -618,7 +724,7 @@ var PB = (function(){
          * then return that listBody.
          * @param {jQuery} listBody
          * @param {[]LessonSeries} allSeries
-         * @returns {jQuery}
+         * @returns {jQuery} The list body with all rows appended to it.
          */
         function appendSeries(listBody, allSeries){
             for(var key in allSeries){
@@ -632,10 +738,10 @@ var PB = (function(){
                 cells[0] = jQuery('<td>' + series.SeriesName + '</td>').addClass("name");
                 cells[1] = jQuery('<td>' + series.Id + '</td>').addClass("id");
                 cells[2] = jQuery('<td>' + series.LessonCount + '</td>').addClass("lessons");
-                cells[3] = makeViewLessonsTd();
-                cells[4] = makeEditTd(series.EditLink);
-                cells[5] = makeDeleteTd();
-                addDeleteClickEvent(
+                cells[3] = makeViewLessonsTd(); //Add icon to view associated lessons.
+                cells[4] = makeEditTd(series.EditLink); //Add edit icon as link
+                cells[5] = makeDeleteTd(); //Add delete icon
+                addDeleteClickEvent( //Add delete click action on icon.
                     cells[5], 
                     series.DeleteLink, 
                     series.Id, 
@@ -643,24 +749,25 @@ var PB = (function(){
                     WhichTableEnum.Series,
                     'series'
                 );
-                addViewLessonsClickEvent(
+                addViewLessonsClickEvent( //Add view lessons click even to icon.
                     cells[3],
                     series.ViewLessonsLink
                 );
-                for(var i in cells){
+                for(var i in cells){ //append all cells to row
                     row.append(cells[i]);
                 };
-                listBody.append(row);
+                listBody.append(row); //append row to listbody
             };
-            return listBody;
+            return listBody; 
         };
         
         /**
          * This will append rows for each school to the passed in listBody,
-         * then return that listBody.
+         * then return that listBody. Function is almost identical to appendSeries.
+         * See comments within that function for explanation, except where commented below.
          * @param {jQuery} listBody
          * @param {[]Category} schools
-         * @returns {jQuery}
+         * @returns {jQuery} The list body with all rows appended to it.
          */
         function appendSchools(listBody, schools){
 
@@ -677,6 +784,14 @@ var PB = (function(){
                 cells[2] = jQuery('<td>' + school.LessonCount + '</td>').addClass("lessons");
                 cells[3] = makeViewLessonsTd();
                 cells[4] = makeEditTd(school.EditLink);
+                /* If the school has lessons, it cannot be deleted. Doing so would delete the
+                 * the associated lessons. Therefore, if the school has lessons, it will display
+                 * "has lessons" and have the "deletePrevented" class on it and the 'deleteBlocked'
+                 * data attribute.
+                 * 
+                 * If the school does not have any lessons, then deletion is permitted and the icon
+                 * will be displayed and the delete event added to the icon.                 * 
+                 */
                 if(school.LessonCount > 0){
                     cells[5] = jQuery('<td> Has Lessons</td>').addClass('deletePrevented');
                     row.data('deleteBlocked', true);
@@ -838,7 +953,8 @@ var PB = (function(){
 
         /**
           * This will take the pseudo-enum value from WhichTableEnum and use
-          * that to fill out the table contents.
+          * that to fill out the table contents. This is the function called from
+          * the button click.
           * @param {int} WhichTableEnum
           */
          function fillTable(WhichTableEnum){
@@ -880,6 +996,7 @@ var PB = (function(){
           */
          function tabToggle(idClicked){
              var buttons = jQuery('.menuBarButton');
+             //Bold only the item clicked, make others normal.
              for(var i=0; i < buttons.length; i++){
                  if(buttons[i].id === idClicked){
                      jQuery(buttons[i]).css('font-weight','bold');
@@ -888,7 +1005,7 @@ var PB = (function(){
                  }
              }
              var div;
-             switch(idClicked){
+             switch(idClicked){ //Get the divname that corresponds with the button clicked.
                  case 'manageLessons':
                      div = jQuery('#lessonsDiv');
                      break;
@@ -902,6 +1019,7 @@ var PB = (function(){
                      break;
              }
              var divs = jQuery('.manageTab');
+             //Show the table selected; hide the rest;
              for(i=0; i < divs.length; i++){
                  if(divs[i].id === div.attr('id')){
                      jQuery(divs[i]).css('display','block');
@@ -930,14 +1048,20 @@ var PB = (function(){
     //see description in the return block.
     var editLesson = (function(){
             //private members
-            var FirstLoad = true;
-            var ctId = "";
-            var form = {
+            var FirstLoad = true; //This will only be true when it first loads, before
+                                //Any other action has been taken on the page.
+            var ctId = ""; //Content type id of the lesson.
+            var form = { //Used to aggregate the various fields and values before posting it to the server.
                 fields: {},
                 selects: {},
                 values: {}
             };
             
+            /**'
+             * This will activate the correct content editor for the specified
+             * content type. If this is the first load, it will populate it with
+             * the content fed by javascript onto the addEditLesson page.
+             */
             function setContent(){
                 var ctDropDown = jQuery('#contentTypeDropDown option:selected');
                 ctId = ctDropDown.val();
@@ -953,47 +1077,80 @@ var PB = (function(){
                     FirstLoad = false;
                 }
             };
+            /**
+             * This will set the dropdown menu for position in series. The positions
+             * available are different depending upon the selected series.
+             */
             function setSeriesPositions(){
+                //Get the selected series Id.
                 var selectedId = jQuery('#seriesDrop option:selected').val();
+                //Remove all current positon options.
                 jQuery('#seriesPosition option').remove();
+                //If no series is selected, stop here.
                 if(selectedId === "" || selectedId === null){
                     return;
                 }
                 PB.editLesson.HighestSeriesOrder = 0;
+                //For each lesson in the selected series...
                 jQuery.each(PB.editLesson.AllSeries[selectedId].Lessons, function(index, value){
+                    //Determine if it's series order is higher than the currently known highest.
+                    //Update the highest known if it IS the highest.
                     PB.editLesson.HighestSeriesOrder = 
                             (parseInt(value.SeriesOrder) > PB.editLesson.HighestSeriesOrder) ? 
                             parseInt(value.SeriesOrder) : 
                             PB.editLesson.HighestSeriesOrder;
                     var lesson = PB.editLesson.ThisLesson;
+                    /* Add an option to place the current lesson before the currently iterated lesson. 
+                     * 
+                     * There's no need to have a "Before position number 5" if the
+                     * lesson's current position is #4. It would be a redundant position.
+                     * Thus, do not do this step if it immediately follows the current position.
+                     */
                     if(parseInt(index) - 1 !== PB.editLesson.CurrentPositionIndex){
                         jQuery('#seriesPosition').append(jQuery('<option>',{
                             value: value.SeriesOrder,
                             text: 'Before #' + (index + 1) + ': ' + value.Title
                         }));
                     }
+                    /* If this is an editor page for an already existing lesson
+                     * (i.e. if the lesson being added is not a new lesson)...
+                     */
                     if(typeof(lesson) !== 'undefined' && lesson !== null){
+                        //And if the lesson has a TruePosition (i.e. it already has a series)...
                         if(lesson.hasOwnProperty('TruePosition')){
-                           if(index + 1 === lesson.TruePosition && lesson.Series.Id === selectedId){
+                            //And if the present 0-based index is the same as the equivalent TruePosition
+                            //And if this page's lesson's current series is the series presently selected...
+                            if(index + 1 === lesson.TruePosition && lesson.Series.Id === selectedId){
+                                //Select this position.
                                 jQuery('#seriesPosition option[value=' + lesson.SeriesOrder + ']').prop('selected',true);
+                                //Rename it to "Current Postion"
                                 jQuery('#seriesPosition option[value=' + lesson.SeriesOrder + ']')
                                         .text('Current Position (#' + (index + 1) + ')')
                                         .css('font-weight', 'bold');
+                                //Store the current position in the PB.editLesson object for later reference.
                                 PB.editLesson.CurrentPositionIndex = parseInt(index);
                             } 
                         }           
                     }
                 });
+                //If the current position isn't already at the end, add an option for "At end of series."
                 if(PB.editLesson.CurrentPositionIndex !== PB.editLesson.AllSeries[selectedId].Lessons - 1){
                     jQuery('#seriesPosition').append(jQuery('<option>',{
                         value: PB.editLesson.HighestSeriesOrder + 1,
                         text: 'At end of series'
                     }));
                 }
+                //If this is a NEW lesson, set the default position to the end of the selected series.
                 if(typeof(PB.editLesson.ThisLesson) === 'undefined'){
-                    jQuery('#seriesPosition option[value="' + PB.editLesson.HighestSeriesOrder + '"]').prop('selected',true);
+                    jQuery('#seriesPosition option[value="' + (PB.editLesson.HighestSeriesOrder + 1) + '"]').prop('selected',true);
                 }
             };
+            
+            /**
+             * Captures all the various fields and values on the form and adds 
+             * them to the form object for later submission.
+             * @returns {undefined}
+             */
             function captureForm(){
                 var set = function(id){
                     form.values[id] = jQuery('#' + id).val();
@@ -1033,6 +1190,13 @@ var PB = (function(){
                 form.formElement = jQuery('#editLessonForm');
             };
             
+            /**
+             * This will obtain the content from the content editor associated with
+             * the selected content type. If it is the html editor, it will use
+             * tinyMCE's getContent function because of the peculiarities of how
+             * that editor sets its content.
+             * @returns {string} The content string.
+             */
             function getContent(){
                 if(ctId === '5' & tinyMCE.activeEditor !== null){
                     return tinyMCE.activeEditor.getContent();
@@ -1041,10 +1205,15 @@ var PB = (function(){
                 return contentForm.val().trim();
             };
             
+            /**
+             * This will preview the lesson content by gathering the content, imagePath,
+             * and content type, then submitting those to the server via ajax get
+             * call, which will respond with the proper embed code.
+             */
             function previewContent(){
                 var content = getContent();
-                jQuery('#contentPreview').html('');
-                if(content === ""){
+                jQuery('#contentPreview').html(''); //Empty the preview div.
+                if(content === ""){ //If there is no content, stop here.
                     return;
                 }
                 var imagePath = jQuery('#imagePath').val();
@@ -1059,12 +1228,18 @@ var PB = (function(){
                     function(data){
                         ajax.hideLoadingImage();
                         jQuery('#contentPreview').append('<p><strong>Preview:</strong></p>');
+                        //Populate the contentPreview div with the received embed code.
                         jQuery('#contentPreview').append(data.embedString);
                     },
                     'json'
                 );
             };
             
+            /**
+             * This will return a single object with a values field (from the
+             * captured form, strigified to json) and the token populated by the server.
+             * @returns {object}
+             */
             function makeRequest(){
                 var request = {};
                 var token = editorResources.getToken();
@@ -1073,6 +1248,9 @@ var PB = (function(){
                 return request;
             };
             
+            /**
+             * This function manages the form submission process from a high level.
+             */
             function submitForm(){
                 captureForm();
                 form.formElement.hide();
@@ -1082,6 +1260,10 @@ var PB = (function(){
                     makeRequest()
                 );
             };
+            
+            /**
+             * Switches the lesson between being set to "published" and "not published."
+             */
             function togglePublished(){
                 var pubSwitch = jQuery('#publish');
                 var switchLabel = jQuery('#switchLabel');
@@ -1118,6 +1300,11 @@ var PB = (function(){
             fields: {},
             values: {}
         };
+        /**
+        * This will return a single object with a values field (from the
+        * captured form, strigified to json) and the token populated by the server.
+        * @returns {object}
+        */
         function makeRequest(){
             var request = {};
             var token = editorResources.getToken();
@@ -1125,6 +1312,11 @@ var PB = (function(){
             request[token] = "1";
             return request;
         };    
+        /**
+        * Captures all the various fields and values on the form and adds 
+        * them to the form object for later submission.
+        * @returns {undefined}
+        */
         function captureForm(){
             var set = function(id){
                 form.values[id] = jQuery('#' + id).val();
@@ -1144,6 +1336,9 @@ var PB = (function(){
             set('imagePath');
             form.formElement = jQuery('#editSeriesForm');
         };     
+        /**
+        * This function manages the form submission process from a high level.
+        */
         function submitForm(){
                 captureForm();
                 form.formElement.hide();
@@ -1165,6 +1360,11 @@ var PB = (function(){
             fields: {},
             values: {}
         };
+        /**
+        * This will return a single object with a values field (from the
+        * captured form, strigified to json) and the token populated by the server.
+        * @returns {object}
+        */
         function makeRequest(){
             var request = {};
             var token = editorResources.getToken();
@@ -1172,6 +1372,11 @@ var PB = (function(){
             request[token] = "1";
             return request;
         };    
+        /**
+        * Captures all the various fields and values on the form and adds 
+        * them to the form object for later submission.
+        * @returns {undefined}
+        */
         function captureForm(){
             var set = function(id){
                 form.values[id] = jQuery('#' + id).val();
@@ -1191,6 +1396,9 @@ var PB = (function(){
             set('imagePath');
             form.formElement = jQuery('#editCategoriesForm');
         };
+        /**
+        * This function manages the form submission process from a high level.
+        */
         function submitForm(){
                 captureForm();
                 form.formElement.hide();
@@ -1224,6 +1432,9 @@ var PB = (function(){
                 return token;
         };
         
+        /**
+         * Previews the specified imagePath.
+         */
         function loadPreviewImage(){
             jQuery('.imagePreview').children().remove();
             var imgSrc = jQuery('#imagePath').val();
@@ -1233,6 +1444,10 @@ var PB = (function(){
             }
         };
         
+        /**
+         * This will display the successful message that is otherwise hidden on the page.
+         * @returns {undefined}
+         */
         function showSuccessfulMessage(){
             jQuery('.feedback').hide();
             var newItem = (location.href.indexOf('&id=') > -1) ? false : true;
@@ -1243,6 +1458,11 @@ var PB = (function(){
             }
             jQuery('#successfullySubmitted').show();
         };
+        
+        /**
+         * This will display the error message that is otherwise hidden on the page.
+         * @param {type} errorMessage
+         */
         function showErrorMessage(errorMessage){
             jQuery('.feedback').hide();
             if(errorMessage){
@@ -1290,60 +1510,76 @@ var PB = (function(){
     };
 }());
 
-
+//These are the function calls when the page is fully loaded.
 jQuery(function(){
     if(jQuery('#editLessonForm').length > 0){ //If the page has the editLessonForm
+        //Wire up the form submission event.
         var form = jQuery('#editLessonForm');
         form.submit(function(e){
             e.preventDefault();
             PB.editLesson.submitForm();
         });
+        //Set the initial series positions for the lesson.
         PB.editLesson.setSeriesPositions();
+        //Set the intial content for the lesson.
         PB.editLesson.setContent();
+        //Set the initial published state for the lesson.
         PB.editLesson.togglePublished();
+        //If this page is for a preexisting lesson, preview its content, if any.
         if(PB.editLesson.ThisLesson !== null){
             PB.editLesson.previewContent();
         }
+        //Wire up the blur event for the content field to preview the contents.
         jQuery('[name="content"]').blur(function(){
            PB.editLesson.previewContent(); 
         });
+        //wire up the preview content button.
         jQuery('#previewButton').click(function(e){
            e.preventDefault();
            PB.editLesson.previewContent(); 
         });
+        //Wire up the change event for the content type dropdown.
         jQuery('#contentTypeDropDown').change(function(){
             PB.editLesson.setContent();
         });
+        //Wire up the change event for the series dropdown menu.
         jQuery('#seriesDrop').change(function(){
             PB.editLesson.setSeriesPositions();
         });
+        //Wire up the change event for the published toggle switch
         jQuery('#publish').change(function(){
             PB.editLesson.togglePublished();
         }); 
-    }else if(jQuery('#editSeriesForm').length > 0){
+    }else if(jQuery('#editSeriesForm').length > 0){ //If this is the series form.
         var form = jQuery('#editSeriesForm');
+        //Wire u the submission event.
         form.submit(function(e){
             e.preventDefault();
             PB.editSeries.submitForm();
         });
-    }else if(jQuery('#editCategoriesForm').length > 0){
+    }else if(jQuery('#editCategoriesForm').length > 0){//If this is for the schools form.
         var form = jQuery('#editCategoriesForm');
+        //wire up the submission event.
         form.submit(function(e){
             e.preventDefault();
             PB.editCategory.submitForm();
         });
     };
-    if(jQuery('.feedback').length > 0){
+    if(jQuery('.feedback').length > 0){ //If there are feedback sections on the form.
+        //Wire up the continue edit click event.
         jQuery('#continueEdit').click(function(){
             jQuery('form').show();
             jQuery('.feedback').hide();
         });
+        //Wire up the reload click event.
         jQuery('#reload').click(function(){
             location.href = PB.AddNewLink;
         });
     };
+    //For any imagePath field, wire up the blur event to preview the image.
     jQuery('#imagePath').blur(function(){
         PB.loadPreviewImage();
     });
+    //Load up the imagePath, if there is one.
     PB.loadPreviewImage();
 });

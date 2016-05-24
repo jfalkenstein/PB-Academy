@@ -1,12 +1,16 @@
 <?php
 
 /**
- * Description of series
+ * This is the subcontroller responsible for dealing with ajax calls relating to
+ * lesson series.
  *
  * @author jfalkenstein
  */
 class seriesController extends BaseController {
     
+    /**
+     * Returns all lesson series in a json object.
+     */
     public function pullAll(){
         /* @var $model SeriesModel */
         $model = $this->getNamedModel('series');
@@ -15,6 +19,10 @@ class seriesController extends BaseController {
         $view->display();
     }
     
+    /**
+     * Adds/updates Lesson series. Will die without valid token. Returns successful
+     * boolean in json response. Raw data is provided by json string.
+     */
     public function AddUpdate(){
         JSession::checkToken() or die('Invalid Token');
         $input = JFactory::getApplication()->input;
@@ -28,7 +36,10 @@ class seriesController extends BaseController {
     }
     
     
-    
+    /**
+     * Deletes lesson series. Will die without valid token. returns successful
+     * boolean in json response.
+     */
     public function Delete(){
         JSession::checkToken() or die('Invalid Token');
         $input = JFactory::getApplication()->input;

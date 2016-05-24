@@ -1,12 +1,16 @@
 <?php
 
 /**
- * Description of category
+ * This controllers handles the category-related AJAX calls.
  *
  * @author jfalkenstein
  */
 class categoryController extends BaseController {
     
+    /**
+     * This is the controller that pulls all categories and returns them in a 
+     * json response.
+     */
     public function pullAll(){
         /* @var $model CategoryModel */
         $model = $this->getNamedModel('category');
@@ -15,6 +19,11 @@ class categoryController extends BaseController {
         $view->display();
     }
     
+    /**
+     * This is the controller that adds/updates categories. It will die if not
+     * accompanied by an anti-forgery token. It will send back in JSON
+     * whether or not the add/update was successful.
+     */
     public function AddUpdate(){
         JSession::checkToken() or die('Invalid Token');
         $input = JFactory::getApplication()->input;
@@ -27,6 +36,11 @@ class categoryController extends BaseController {
         $view->display();
     }
     
+    /**
+     * This is the controller that deletes categories. It will die if not accompanied
+     * by an anti-forgery token. It will send back in JSON
+     * whether or not the delete was successful.
+     */
     public function Delete(){
         JSession::checkToken() or die('Invalid Token');
         $input = JFactory::getApplication()->input;
