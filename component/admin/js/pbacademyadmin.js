@@ -1048,14 +1048,20 @@ var PB = (function(){
     //see description in the return block.
     var editLesson = (function(){
             //private members
-            var FirstLoad = true;
-            var ctId = "";
-            var form = {
+            var FirstLoad = true; //This will only be true when it first loads, before
+                                //Any other action has been taken on the page.
+            var ctId = ""; //Content type id of the lesson.
+            var form = { //Used to aggregate the various fields and values before posting it to the server.
                 fields: {},
                 selects: {},
                 values: {}
             };
             
+            /**'
+             * This will activate the correct content editor for the specified
+             * content type. If this is the first load, it will populate it with
+             * the content fed by javascript onto the addEditLesson page.
+             */
             function setContent(){
                 var ctDropDown = jQuery('#contentTypeDropDown option:selected');
                 ctId = ctDropDown.val();
@@ -1071,47 +1077,80 @@ var PB = (function(){
                     FirstLoad = false;
                 }
             };
+            /**
+             * This will set the dropdown menu for position in series. The positions
+             * available are different depending upon the selected series.
+             */
             function setSeriesPositions(){
+                //Get the selected series Id.
                 var selectedId = jQuery('#seriesDrop option:selected').val();
+                //Remove all current positon options.
                 jQuery('#seriesPosition option').remove();
+                //If no series is selected, stop here.
                 if(selectedId === "" || selectedId === null){
                     return;
                 }
                 PB.editLesson.HighestSeriesOrder = 0;
+                //For each lesson in the selected series...
                 jQuery.each(PB.editLesson.AllSeries[selectedId].Lessons, function(index, value){
+                    //Determine if it's series order is higher than the currently known highest.
+                    //Update the highest known if it IS the highest.
                     PB.editLesson.HighestSeriesOrder = 
                             (parseInt(value.SeriesOrder) > PB.editLesson.HighestSeriesOrder) ? 
                             parseInt(value.SeriesOrder) : 
                             PB.editLesson.HighestSeriesOrder;
                     var lesson = PB.editLesson.ThisLesson;
+                    /* Add an option to place the current lesson before the currently iterated lesson. 
+                     * 
+                     * There's no need to have a "Before position number 5" if the
+                     * lesson's current position is #4. It would be a redundant position.
+                     * Thus, do not do this step if it immediately follows the current position.
+                     */
                     if(parseInt(index) - 1 !== PB.editLesson.CurrentPositionIndex){
                         jQuery('#seriesPosition').append(jQuery('<option>',{
                             value: value.SeriesOrder,
                             text: 'Before #' + (index + 1) + ': ' + value.Title
                         }));
                     }
+                    /* If this is an editor page for an already existing lesson
+                     * (i.e. if the lesson being added is not a new lesson)...
+                     */
                     if(typeof(lesson) !== 'undefined' && lesson !== null){
+                        //And if the lesson has a TruePosition (i.e. it already has a series)...
                         if(lesson.hasOwnProperty('TruePosition')){
-                           if(index + 1 === lesson.TruePosition && lesson.Series.Id === selectedId){
+                            //And if the present 0-based index is the same as the equivalent TruePosition
+                            //And if this page's lesson's current series is the series presently selected...
+                            if(index + 1 === lesson.TruePosition && lesson.Series.Id === selectedId){
+                                //Select this position.
                                 jQuery('#seriesPosition option[value=' + lesson.SeriesOrder + ']').prop('selected',true);
+                                //Rename it to "Current Postion"
                                 jQuery('#seriesPosition option[value=' + lesson.SeriesOrder + ']')
                                         .text('Current Position (#' + (index + 1) + ')')
                                         .css('font-weight', 'bold');
+                                //Store the current position in the PB.editLesson object for later reference.
                                 PB.editLesson.CurrentPositionIndex = parseInt(index);
                             } 
                         }           
                     }
                 });
+                //If the current position isn't already at the end, add an option for "At end of series."
                 if(PB.editLesson.CurrentPositionIndex !== PB.editLesson.AllSeries[selectedId].Lessons - 1){
                     jQuery('#seriesPosition').append(jQuery('<option>',{
                         value: PB.editLesson.HighestSeriesOrder + 1,
                         text: 'At end of series'
                     }));
                 }
+                //If this is a NEW lesson, set the default position to the end of the selected series.
                 if(typeof(PB.editLesson.ThisLesson) === 'undefined'){
-                    jQuery('#seriesPosition option[value="' + PB.editLesson.HighestSeriesOrder + '"]').prop('selected',true);
+                    jQuery('#seriesPosition option[value="' + (PB.editLesson.HighestSeriesOrder + 1) + '"]').prop('selected',true);
                 }
             };
+            
+            /**
+             * Captures all the various fields and values on the form and adds 
+             * them to the form object for later submission.
+             * @returns {undefined}
+             */
             function captureForm(){
                 var set = function(id){
                     form.values[id] = jQuery('#' + id).val();
@@ -1151,6 +1190,13 @@ var PB = (function(){
                 form.formElement = jQuery('#editLessonForm');
             };
             
+            /**
+             * This will obtain the content from the content editor associated with
+             * the selected content type. If it is the html editor, it will use
+             * tinyMCE's getContent function because of the peculiarities of how
+             * that editor sets its content.
+             * @returns {string} The content string.
+             */
             function getContent(){
                 if(ctId === '5' & tinyMCE.activeEditor !== null){
                     return tinyMCE.activeEditor.getContent();
@@ -1159,10 +1205,15 @@ var PB = (function(){
                 return contentForm.val().trim();
             };
             
+            /**
+             * This will preview the lesson content by gathering the content, imagePath,
+             * and content type, then submitting those to the server via ajax get
+             * call, which will respond with the proper embed code.
+             */
             function previewContent(){
                 var content = getContent();
-                jQuery('#contentPreview').html('');
-                if(content === ""){
+                jQuery('#contentPreview').html(''); //Empty the preview div.
+                if(content === ""){ //If there is no content, stop here.
                     return;
                 }
                 var imagePath = jQuery('#imagePath').val();
@@ -1177,12 +1228,18 @@ var PB = (function(){
                     function(data){
                         ajax.hideLoadingImage();
                         jQuery('#contentPreview').append('<p><strong>Preview:</strong></p>');
+                        //Populate the contentPreview div with the received embed code.
                         jQuery('#contentPreview').append(data.embedString);
                     },
                     'json'
                 );
             };
             
+            /**
+             * This will return a single object with a values field (from the
+             * captured form, strigified to json) and the token populated by the server.
+             * @returns {object}
+             */
             function makeRequest(){
                 var request = {};
                 var token = editorResources.getToken();
@@ -1191,6 +1248,9 @@ var PB = (function(){
                 return request;
             };
             
+            /**
+             * This function manages the form submission process from a high level.
+             */
             function submitForm(){
                 captureForm();
                 form.formElement.hide();
@@ -1200,6 +1260,10 @@ var PB = (function(){
                     makeRequest()
                 );
             };
+            
+            /**
+             * Switches the lesson between being set to "published" and "not published."
+             */
             function togglePublished(){
                 var pubSwitch = jQuery('#publish');
                 var switchLabel = jQuery('#switchLabel');
