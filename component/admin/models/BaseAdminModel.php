@@ -3,13 +3,12 @@
 require_once PB_ACADEMY_LIB . '/PBAcademyManager.php';
 
 /**
+ * 
  * @property PBAcademyManager $pbAcademyManager
  */
 abstract class BaseAdminModel extends JModelLegacy
 {
     public $pbAcademyManager;
-    private $allCategories;
-    private $allSeries;
     
     public function __construct($config = array()) {
         $this->pbAcademyManager = PBAcademyManager::GetInstance();
