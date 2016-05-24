@@ -320,6 +320,10 @@ var PB = (function(){
             }
         };
 
+        /**
+         * This will add a "delete selected" button to the table specified by the enum.
+         * @param {int} whichTableEnum
+         */
         function showDeleteSelectedButton(whichTableEnum){
             var divName = adminHome.getSectionDivName(whichTableEnum);
             if(jQuery('#' + divName + ' .deleteSelected').length === 0){
@@ -330,24 +334,35 @@ var PB = (function(){
                 jQuery('#' + divName + ' .tablePlace').before(btn);
             } 
         };
-
+        
+        /**
+         * Hides the "delete selected" button in the table identified by the enum.
+         * @param {type} whichTableEnum
+         */
         function hideDeleteSelectedButton(whichTableEnum){
             var divName = adminHome.getSectionDivName(whichTableEnum);
             jQuery('#' + divName + ' .deleteSelected').remove();
         };
-
+        
+        /**
+         * Shows the delete selections light box.
+         * @param {type} whichTableEnum
+         */
         function showDeleteSelectionsLightBox(whichTableEnum){
             var contentDiv = jQuery('<div></div>');
             var promptText = jQuery('<p>Are you sure you want to delete these items? This cannot be undone.</p>');
             contentDiv.append(promptText);
+            //Get a list of selected items that match the specified table.
             var selectedItems = jQuery.grep(adminHome.SelectedItems, function(o){
                 return (parseInt(o.Table) === parseInt(whichTableEnum));
             });
             var list = jQuery('<ul></ul>');
+            //List all the items to be deleted.
             for(var i in selectedItems){
                 list.append('<li>' + selectedItems[i].Name + ' (#' + selectedItems[i].IdToDelete + ')</li>');
             }
             contentDiv.append(list);
+            //Create the button to delete the items.
             var yesDeleteBtn = new ButtonDef(
                 "yesDelete", 
                 "Yes, delete them all.", 
@@ -357,44 +372,58 @@ var PB = (function(){
                 },
                 whichTableEnum
             );
+            //create cancel button
             var noBtn = new ButtonDef("noDelete", "Never mind. Don't delete them.", function (){
                 lightBoxMaker.closePromptBox();
                 selectNone();
             });
             var btnArray = [yesDeleteBtn, noBtn];
+            //Create and display the lightbox.
             lightBoxMaker.makePromptBox(contentDiv, btnArray, "Delete all selected items?");
         };
-
+        
+        /**
+         * Issues the delete command for all selected items within the specified table
+         * @param {int} whichTableEnum
+         */
         function deleteAllSelected(whichTableEnum){
+            //Get list of selected items for the specified table.
             var selectedItems = jQuery.grep(adminHome.SelectedItems, function(o){
                 return (parseInt(o.Table) === parseInt(whichTableEnum));
             });
-            PB.adminHome.ReturnedCalls = 0;
-            PB.adminHome.CallGoal = selectedItems.length;
+            PB.adminHome.ReturnedCalls = 0; //Counter to ensure all ajax calls have responded.
+            PB.adminHome.CallGoal = selectedItems.length; //The # of calls that will be made.
             ajax.displayLoadingImage('lightBox');
-            for(var i in selectedItems){
+            for(var i in selectedItems){ //For each item to delete, issue the delete command.
                 adminHome.deleteItem(
                     selectedItems[i].DeleteLink, 
                     selectedItems[i].IdToDelete, 
-                    function(data, textStatus, jqXHR){
+                    function(data){
                         ajax.hideLoadingImage();
-                        if(!data.success){
+                        if(!data.success){ //IF the call was successful, but the server couldn't delete...
                             PB.adminHome.Error = true;
                         }
-                        PB.adminHome.ReturnedCalls++;
+                        PB.adminHome.ReturnedCalls++; //add one to the returned calls
                         finishAjaxBlast(whichTableEnum);
                     },
-                    function(jqXHR, textStatus, errorThrown){
+                    function(){ //If the call was not successful...
                         PB.adminHome.Error = true;
-                        PB.adminHome.ReturnedCalls++;
+                        PB.adminHome.ReturnedCalls++; //add one to the returned calls.
                         finishAjaxBlast(whichTableEnum);
                     }
                 );
             }
         };
-
+        
+        /**
+         * This will evaluate whether or not all ajax calls have been received.
+         * If so, it will notify the user all items have been deleted. If there
+         * was an error encountered in any of the calls, the user will be notified.
+         * @param {type} whichTableEnum
+         */
         function finishAjaxBlast(whichTableEnum){
-            if(PB.adminHome.ReturnedCalls === PB.adminHome.CallGoal){
+            //If the number of calls returned = the number of calls made...
+            if(PB.adminHome.ReturnedCalls === PB.adminHome.CallGoal){ 
                 ajax.hideLoadingImage();
                 if(PB.adminHome.Error){
                     lightBoxMaker.makeOkBox("There was an error with the deletion. Not all may have been deleted.");
@@ -405,11 +434,16 @@ var PB = (function(){
                 PB.adminHome.refreshTable(whichTableEnum);
             }
         }
-        
+        /**
+         * Deselects all items from all tables.
+         * @returns {undefined}
+         */
         function selectNone(){
             jQuery('.selectCheck').prop('checked',false);
             PB.adminHome.SelectedItems = [];
         };
+        
+        //Internally exposed methods.
         return {
             addDeleteCheckBoxes: addDeleteCheckBoxes,
             selectNone: selectNone,
