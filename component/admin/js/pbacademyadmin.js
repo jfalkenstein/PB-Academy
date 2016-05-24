@@ -1432,6 +1432,9 @@ var PB = (function(){
                 return token;
         };
         
+        /**
+         * Previews the specified imagePath.
+         */
         function loadPreviewImage(){
             jQuery('.imagePreview').children().remove();
             var imgSrc = jQuery('#imagePath').val();
@@ -1441,6 +1444,10 @@ var PB = (function(){
             }
         };
         
+        /**
+         * This will display the successful message that is otherwise hidden on the page.
+         * @returns {undefined}
+         */
         function showSuccessfulMessage(){
             jQuery('.feedback').hide();
             var newItem = (location.href.indexOf('&id=') > -1) ? false : true;
@@ -1451,6 +1458,11 @@ var PB = (function(){
             }
             jQuery('#successfullySubmitted').show();
         };
+        
+        /**
+         * This will display the error message that is otherwise hidden on the page.
+         * @param {type} errorMessage
+         */
         function showErrorMessage(errorMessage){
             jQuery('.feedback').hide();
             if(errorMessage){
@@ -1498,60 +1510,76 @@ var PB = (function(){
     };
 }());
 
-
+//These are the function calls when the page is fully loaded.
 jQuery(function(){
     if(jQuery('#editLessonForm').length > 0){ //If the page has the editLessonForm
+        //Wire up the form submission event.
         var form = jQuery('#editLessonForm');
         form.submit(function(e){
             e.preventDefault();
             PB.editLesson.submitForm();
         });
+        //Set the initial series positions for the lesson.
         PB.editLesson.setSeriesPositions();
+        //Set the intial content for the lesson.
         PB.editLesson.setContent();
+        //Set the initial published state for the lesson.
         PB.editLesson.togglePublished();
+        //If this page is for a preexisting lesson, preview its content, if any.
         if(PB.editLesson.ThisLesson !== null){
             PB.editLesson.previewContent();
         }
+        //Wire up the blur event for the content field to preview the contents.
         jQuery('[name="content"]').blur(function(){
            PB.editLesson.previewContent(); 
         });
+        //wire up the preview content button.
         jQuery('#previewButton').click(function(e){
            e.preventDefault();
            PB.editLesson.previewContent(); 
         });
+        //Wire up the change event for the content type dropdown.
         jQuery('#contentTypeDropDown').change(function(){
             PB.editLesson.setContent();
         });
+        //Wire up the change event for the series dropdown menu.
         jQuery('#seriesDrop').change(function(){
             PB.editLesson.setSeriesPositions();
         });
+        //Wire up the change event for the published toggle switch
         jQuery('#publish').change(function(){
             PB.editLesson.togglePublished();
         }); 
-    }else if(jQuery('#editSeriesForm').length > 0){
+    }else if(jQuery('#editSeriesForm').length > 0){ //If this is the series form.
         var form = jQuery('#editSeriesForm');
+        //Wire u the submission event.
         form.submit(function(e){
             e.preventDefault();
             PB.editSeries.submitForm();
         });
-    }else if(jQuery('#editCategoriesForm').length > 0){
+    }else if(jQuery('#editCategoriesForm').length > 0){//If this is for the schools form.
         var form = jQuery('#editCategoriesForm');
+        //wire up the submission event.
         form.submit(function(e){
             e.preventDefault();
             PB.editCategory.submitForm();
         });
     };
-    if(jQuery('.feedback').length > 0){
+    if(jQuery('.feedback').length > 0){ //If there are feedback sections on the form.
+        //Wire up the continue edit click event.
         jQuery('#continueEdit').click(function(){
             jQuery('form').show();
             jQuery('.feedback').hide();
         });
+        //Wire up the reload click event.
         jQuery('#reload').click(function(){
             location.href = PB.AddNewLink;
         });
     };
+    //For any imagePath field, wire up the blur event to preview the image.
     jQuery('#imagePath').blur(function(){
         PB.loadPreviewImage();
     });
+    //Load up the imagePath, if there is one.
     PB.loadPreviewImage();
 });
