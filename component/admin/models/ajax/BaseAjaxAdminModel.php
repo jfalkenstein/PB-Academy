@@ -1,7 +1,8 @@
 <?php
 
 /**
- * Description of BaseAjaxAdminModel
+ * This is the base model for the various ajax models. It provides basic access
+ * to the PBAcademyManager.
  * @property PBAcademyManager $PBAcademyManager
  * @author jfalkenstein
  */
