@@ -7,6 +7,7 @@ $AllSeries = $this->AllSeries;
 ?>
 
 <script>
+    //Load relevant variables into the PB namespace.
     PB.editLesson.ThisLesson = <?php echo json_encode($ThisLesson); ?>;
     PB.editLesson.AllSeries = <?php echo json_encode($AllSeries); ?>;
     PB.editLesson.PostUrl = '<?php echo AdminUrlMaker::AjaxPostLesson()?>';

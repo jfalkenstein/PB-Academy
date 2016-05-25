@@ -1,7 +1,6 @@
 <?php
 
 /**
- * Description of view
  * @property []LessonSeries $AllSeries 
  * @property []Category $AllCategories 
  * @property []ContentType $ContentTypes

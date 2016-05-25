@@ -1,9 +1,7 @@
 <?php
 
 /**
- * Description of view
  * @property Category $Category
- * @author jfalkenstein
  */
 class PbAcademyViewAddEditCategory extends BaseAdminViewMaster {
     

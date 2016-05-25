@@ -3,6 +3,7 @@
 $ThisCategory = $this->Category;
 ?>
 <script>
+    //Load relevant variables from PHP into the PB namespace. 
     PB.editCategory.PostUrl = '<?php echo AdminUrlMaker::AjaxPostCategory();?>';
     PB.AddNewLink = '<?php echo AdminUrlMaker::AddEditCategory(); ?>';
 </script>
