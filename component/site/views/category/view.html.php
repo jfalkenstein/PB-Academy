@@ -49,4 +49,8 @@ class PbAcademyViewCategory extends BaseViewMaster implements INavBarView, IList
         return $this->ThisCategory->GetLink();
     }
 
+    public function ShowSeriesPositionInTitle() {
+        return true;
+    }
+
 }
