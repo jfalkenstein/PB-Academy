@@ -13,7 +13,7 @@
  */
 class NavBar {
     //The path of the directory where the various navbar section templates are stored.
-    private $navSectionsPath = __DIR__ . '/../views/sharedViewResources/tmpl/NavBarSections/';
+    private $navSectionsPath;
     
     public $thisCategory;
     public $thisLesson;
@@ -27,6 +27,7 @@ class NavBar {
                                 Category $thisCategory = null,
                                 LessonSeries $thisSeries = null
                                 ){
+        $this->navSectionsPath = __DIR__ . '/../views/sharedViewResources/tmpl/NavBarSections/';
         if($thisLesson){//If a lesson is specified...
             $this->thisLesson = $thisLesson; 
             //Set the Category to the lesson's category, ignoring any specified category.
