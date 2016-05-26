@@ -1,7 +1,6 @@
 <?php
 
 /**
- * Description of view
  * @property LessonSeries $Series
  * @author jfalkenstein
  */

@@ -1,5 +1,8 @@
 <?php
 
+/**
+ * The model for the lesson views.
+ */
 class PbAcademyModelLesson extends BaseModel
 {    
     private $lessonId;

@@ -1,12 +1,15 @@
 <?php
 
 /**
- * Description of CategoriesRepository
- *
+ * The Joomla repository for all categories.
  * @author jfalkenstein
  */
 class CategoriesRepository extends BaseJoomlaRepository implements ICategoriesRepository{
     
+    /**
+     * Obtains ALL categories from the DB.
+     * @return Category[]
+     */
     public function GetAll() {
         $cats = [];
         $rawCats = $this->getRawCategoriesFromDb();
@@ -16,6 +19,12 @@ class CategoriesRepository extends BaseJoomlaRepository implements ICategoriesRe
         return $cats;
     }
     
+    /**
+     * This establishes and executes the db query to obtain a stdClass array
+     * of categories.
+     * @param int $id Optional value. If specified, only returns single object.
+     * @return stdClass[]/stdClass
+     */
     private function getRawCategoriesFromDb($id = null){
         $db = $this->db;
         $query = $db->getQuery(true);
@@ -30,6 +39,11 @@ class CategoriesRepository extends BaseJoomlaRepository implements ICategoriesRe
         return $db->loadObjectList();
     }
     
+    /**
+     * Converts a stdClass object to a Category.
+     * @param stdClass $rawCat
+     * @return \Category
+     */
     private function convertRawCategory (stdClass $rawCat){ 
         $cat = new Category(
                     $rawCat->Name,
@@ -39,14 +53,28 @@ class CategoriesRepository extends BaseJoomlaRepository implements ICategoriesRe
         return $cat;
     }
     
+    /**
+     * Obtains a single Category, identified by its Id.
+     * @param int $id
+     * @param null $default The value to return if not found.
+     * @return Category
+     */
     public function GetById($id, $default = null) {
         $rawCat = $this->getRawCategoriesFromDb($id);
         if(is_null($rawCat)) return $default;
         return $this->convertRawCategory($rawCat);
     }
+    
+    /**
+     * Saves a Category to the DB. Returns a success boolean.
+     * @param Category $item
+     * @param bool $update Whether or not this is an update or a new category
+     * @return bool
+     */
     public function Save($item, $update = FALSE) {
         $db = $this->db;
         $query = $db->getQuery(true);
+        //Convert the Category to a stdClass object.
         $object = new stdClass();
         $object->Id = $item->Id;
         $object->Name = $item->Name;
@@ -60,7 +88,11 @@ class CategoriesRepository extends BaseJoomlaRepository implements ICategoriesRe
         }
         return $success;
     }
-    
+    /**
+     * Deletes a category from the DB. Returns a success boolean.
+     * @param int $id
+     * @return bool
+     */
     public function Delete($id) {
         $db = $this->db;
         $query = $db->getQuery(true);

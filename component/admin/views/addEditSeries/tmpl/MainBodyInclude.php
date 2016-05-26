@@ -3,6 +3,7 @@
 $ThisSeries = $this->Series;
 ?>
 <script>
+    //Load relevant variables into PB namespace.
     PB.editSeries.PostUrl = '<?php echo AdminUrlMaker::AjaxPostSeries();?>';
     PB.AddNewLink = '<?php echo AdminUrlMaker::AddEditSeries(); ?>';
 </script>

@@ -1,7 +1,8 @@
 <?php
 
 /**
- * Description of UrlMaker
+ * This class provides centralized access to URL routes. A change to any of these
+ * will be enacted system-wide.
  *
  * @author jfalkenstein
  */

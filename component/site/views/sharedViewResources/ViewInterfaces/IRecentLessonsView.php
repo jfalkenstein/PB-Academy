@@ -1,7 +1,7 @@
 <?php
 
 /**
- *
+ * This allows the recent lessons template to be used.
  * @author jfalkenstein
  */
 interface IRecentLessonsView{

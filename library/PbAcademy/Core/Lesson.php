@@ -1,5 +1,6 @@
 <?php
 /**
+ * Lessons are the most important unit of the entire PB Academy.
  * @property Category $Category This is the category to which this lesson belongs.
  * @property LessonSeries $Series
  * @property ILessonsRepository $db 
@@ -58,14 +59,29 @@ class Lesson{
         return $this->contentType;
     }
     
+    /**
+     * Formats the publish date to a human-readable format.
+     * @return string
+     */
     public function DatePublished(){
         return date('m/d/y',  strtotime($this->datePublished));
     }
-    
+    /**
+     * Formats the date published to a format MySQL will accept.
+     * @return string
+     */
     public function DateForSql(){
         return date('Y-m-d', strtotime($this->datePublished));
     }
     
+    /**
+     * This will obtain the ACTUAL position this lesson holds in the Series. It
+     * is contingent upon the seriesOrder, but is determined by the Series object
+     * to which this Lesson belongs.
+     * @param bool $publishedOnly Determins whether unpublished lessons should be
+     * considered in determining this lesson's position.
+     * @return int
+     */
     public function TrueSeriesPosition($publishedOnly = true){
         if(is_null($this->Series)){
             return '';
@@ -73,6 +89,10 @@ class Lesson{
         return $this->Series->GetLessonPosition($this, null, $publishedOnly)+1;
     }
     
+    /**
+     * Obtains the link to this lesson.
+     * @return type
+     */
     public function GetLink(){
         return UrlMaker::Lesson($this->Id);
     }    

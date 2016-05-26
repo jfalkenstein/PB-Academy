@@ -1,7 +1,7 @@
 <?php
 
 /**
- *
+ * These are the required functions for a Lessons Repository (in addition to those added by IRepository).
  * @author jfalkenstein
  */
 interface ILessonsRepository extends IRepository {

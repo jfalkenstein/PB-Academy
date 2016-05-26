@@ -1,7 +1,10 @@
 <?php
 
 defined('_JEXEC') or die('Restricted Access');
-
+require_once JPATH_LIBRARIES . '/pbacademylib/PbAcademy/UrlMaker.php';
+/**
+ * This plugin enables Joomla's search function to find lessons.
+ */
 class PlgSearchPbacademySearch extends JPlugin
 {
     public function __construct(&$subject, $config = array()) {
@@ -95,9 +98,7 @@ class PlgSearchPbacademySearch extends JPlugin
         $rows = $db->loadObjectList();
         
         foreach($rows as $key=>$row){
-            $rows[$key]->href = JRoute::_('index.php?option=com_pbacademy'
-                                        . '&section=lesson'
-                                        . '&l_id=' . $row->Id);
+            $rows[$key]->href = UrlMaker::Lesson($row->Id);
             $rows[$key]->section = "P&B Academy";
             $rows[$key]->browsernav = '1';
         }

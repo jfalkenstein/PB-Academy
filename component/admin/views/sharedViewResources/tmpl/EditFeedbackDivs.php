@@ -1,3 +1,8 @@
+<?php 
+/*
+ * This is a section used to provide feedback on ajax calls on the edit views.
+ */
+?>
 <div class="feedback" id="successfullySubmitted">
     <span id="successfulMessage"></span><br/>
     <button class="btn btn-default" id="continueEdit">Continue Editing Form</button>

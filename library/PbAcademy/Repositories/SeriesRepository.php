@@ -1,8 +1,7 @@
 <?php
 
 /**
- * Description of SeriesRepository
- *
+ * The repository for series
  * @author jfalkenstein
  */
 class SeriesRepository extends BaseJoomlaRepository implements ISeriesRepository{
@@ -73,6 +72,12 @@ class SeriesRepository extends BaseJoomlaRepository implements ISeriesRepository
                                 $rawSeries->Description);
     }
     
+    /**
+     * Saves/updates an Series and returns a success boolean.
+     * @param LessonSeries $item
+     * @param bool $update
+     * @return bool
+     */
     public function Save($item, $update = FALSE) {
         $db = $this->db;
         $query = $db->getQuery(true);
@@ -89,6 +94,11 @@ class SeriesRepository extends BaseJoomlaRepository implements ISeriesRepository
         }
         return $success;
     }
+    /**
+     * Deletes a series and returns a success boolean.
+     * @param int $id
+     * @return bool
+     */
     public function Delete($id) {
         $db = $this->db;
         $query = $db->getQuery(true);

@@ -1,26 +1,32 @@
 <?php
 /* @var $this IListLessonsView */
-if(is_a($this, 'IListLessonsView')){
+//To use this view, you must implement IListLessonsView
 
+if(is_a($this, 'IListLessonsView')){
 
 $numThumbsPerPage = 12;
 $ViewStart;
 $ViewEnd;
 $numAlreadyViewed = 0;
-if($this->PageNumber === 1){
+if($this->PageNumber === 1){//If this is the first page...
     $ViewStart = 0;
+    //Decide the index of the last item to be displayed.
     $ViewEnd = (
-                    (count($this->GetLessons()) > $numThumbsPerPage) 
-                    ? $numThumbsPerPage 
-                    : count($this->GetLessons())
-                  ) - 1;
-}else{
+                //Is the number of lessons greater than the number per page?
+                (count($this->GetLessons()) > $numThumbsPerPage)
+                ? $numThumbsPerPage  //If so, then end by displaying the max nubmer.
+                : count($this->GetLessons()) //Else end by displaying the number remaining.
+              ) - 1; //Index is zero-based.
+}else{ //If this is a page number greater than 1...
+    //The number already viewed is the starting index. This is calculated by the number to be displayed
+    //per page multiplied by the page number, subtracted by 1.
     $numAlreadyViewed = $ViewStart = $numThumbsPerPage * ($this->PageNumber - 1);
     $ViewEnd = (
-                    ((count($this->GetLessons()) - $numAlreadyViewed) > $numThumbsPerPage)
-                    ? $numThumbsPerPage + $numAlreadyViewed
-                    : count($this->GetLessons())
-                  ) - 1;
+                //Is the # of lessons total (less the n# already viewed) greater than the number to display per page?   
+                ((count($this->GetLessons()) - $numAlreadyViewed) > $numThumbsPerPage)
+                ? $numThumbsPerPage + $numAlreadyViewed //If so, then stop after displaying #thumbs per page more...
+                : count($this->GetLessons()) //Else, stop at the index of the total number of lessons.
+              ) - 1; //Index is zero-based.
 }
 ?>
 <?php if($this->PageNumber != 1): ?>

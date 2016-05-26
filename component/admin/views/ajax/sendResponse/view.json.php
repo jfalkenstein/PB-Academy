@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * This class is a view class, specifically intended to send a single object in
+ * a json response. This object is pulled from the configArray, set by the varous controllers.
+ */
 class SendResponseView extends BaseAjaxViewMaster
 {
     private $response;

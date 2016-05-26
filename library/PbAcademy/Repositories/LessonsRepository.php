@@ -1,18 +1,23 @@
 <?php
 
 /**
- * Description of LessonsRepository
- *
+ * This is the repository for lessons.
  * @author jfalkenstein
  * @property JDatabaseDriver $db
  */
 class LessonsRepository extends BaseJoomlaRepository implements ILessonsRepository {
 
+    /**
+     * Obtains ALL lessons in the DB.
+     * @param bool $publishedOnly  Whether or not to include unpublished lessons.
+     * @return Lesson[]
+     */
     public function GetAllLessons($publishedOnly = true) {
         return $this->GetRecentLessons(0, null, $publishedOnly);
     }
+    
     /**
-     * 
+     * Gets a specific lesson by Id.
      * @param int $id
      * @param mixed $default
      * @return Lesson
@@ -63,6 +68,11 @@ class LessonsRepository extends BaseJoomlaRepository implements ILessonsReposito
                 $isPublished);
         return $les;
     }
+    /**
+     * Obtains a specific lesson object from the DB.
+     * @param int $id
+     * @return stdClass
+     */
     private function getRawLessonFromDb($id){
         $db = $this->db;
         $query = self::getQueryForAllLessons($db);
@@ -75,7 +85,7 @@ class LessonsRepository extends BaseJoomlaRepository implements ILessonsReposito
     /**
      * getQueryForAllLessons:
      * This method is a shortcut for the complicated join query required to pull
-     * all lessons. 
+     * lessons. 
      * @return JDatabaseQuery - The loaded query object
      */
     private function getQueryForAllLessons(){
@@ -134,7 +144,7 @@ class LessonsRepository extends BaseJoomlaRepository implements ILessonsReposito
      * This static method will return the specified number of Lessons
      *  most recently published, or the maximum available. If $catId is specified,
      *  it will only return the lessons for the specified category.
-     * @param int $numberToGet
+     * @param int $numberToGet If 0, returns ALL lessons.
      * @param int $catId
      * @return []Lesson - An array of Lesson.
      */
@@ -178,7 +188,14 @@ class LessonsRepository extends BaseJoomlaRepository implements ILessonsReposito
         return $lessons;
     }
     
+    /**
+     * Saves a lesson to the DB and returns a success boolean.
+     * @param Lesson $item
+     * @param bool $update Whether or not this is updating an existing lesson.
+     * @return bool
+     */
     public function Save($item, $update = FALSE) {
+        //If the Lesson has a series and a seriesOrder, bump all lessons tied and following it
         if(isset($item->SeriesOrder) && isset($item->Series)){
             $this->bumpSeriesOrders($item->SeriesOrder, $item->Series->Id);
         }
@@ -206,6 +223,12 @@ class LessonsRepository extends BaseJoomlaRepository implements ILessonsReposito
         return $success;
     }
     
+    /**
+     * This will add 1 to the seriesOrder for all lessons that tie or are greater than
+     * the present lesson in seriesOrder.
+     * @param int $positionToBump
+     * @param int $seriesId
+     */
     private function bumpSeriesOrders($positionToBump, $seriesId){
         $db = $this->db;
         $query = $db->getQuery(true);
@@ -217,6 +240,11 @@ class LessonsRepository extends BaseJoomlaRepository implements ILessonsReposito
         $db->execute();
     }
     
+    /**
+     * Deletes the Lesson specified by the given Id and returns a success boolean.
+     * @param int $id
+     * @return bool
+     */
     public function Delete($id){
         $db = $this->db;
         $query = $db->getQuery(true);

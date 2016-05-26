@@ -1,14 +1,11 @@
 <?php
 
 /**
- * Description of view
- *
+ * The view for all series.
  * @author jfalkenstein
  */
 class PbAcademyViewAllSeries extends BaseViewMaster implements IAllSeriesView, INavBarView{
-     public function display($tpl = null) {
-        parent::display($tpl);
-    }
+
     public function setCategories() {
         $this->Categories = $this->get('Categories','allseries');
     }

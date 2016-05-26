@@ -11,6 +11,7 @@
     <button class="menuBarButton btn btn-default" id="manageSeries" onclick="PB.adminHome.tabToggle('manageSeries')">Manage Series</button>
     <button class="menuBarButton btn btn-default" id="manageSchools" onclick="PB.adminHome.tabToggle('manageSchools')">Manage Schools</button>
 </div>
+<!--Manage Lessons-->
 <div class="manageTab" id="lessonsDiv">
 <?php 
 $table = $this->WhichTableEnum["Lessons"];
@@ -18,6 +19,7 @@ $fieldNames = ['title', 'date','school','series'];
 $this->getManageSection(AdminUrlMaker::AddEditLesson(), $table, $fieldNames);
 ?>
 </div>
+<!--Manage Lesson Series-->
 <div class="manageTab" id="seriesDiv">
 <?php 
 $table = $this->WhichTableEnum["Series"];
@@ -25,6 +27,7 @@ $fieldNames = ['name', 'lessons'];
 $this->getManageSection(AdminUrlMaker::AddEditSeries(), $table, $fieldNames);
 ?>
 </div>
+<!--Manage Schools-->
 <div class="manageTab" id="schoolsDiv">
 <?php 
 $table = $this->WhichTableEnum["Schools"];

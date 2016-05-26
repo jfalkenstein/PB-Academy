@@ -84,3 +84,16 @@ INSERT INTO `#__CBUCategories` (`Id`, `Name`, `Description`, `ImagePath`) VALUES
 (7, 'The Pastor''s role','Here we''ll address how a pastor can fulfill his function as ex officio president and chairperson of the board.','http://lorempixel.com/600/600'),
 (8, 'Legal and Tax Issues','This is the place for lessons related to legal and tax issues.', '/components/com_pbacademy/images/categories/legal.jpg'),
 (12, 'P&B Benefits', 'Lessons in this school are all about the various benefit programs available through Pensions and Benefits USA.', '/images/pbacademy/schools/P&B-Blue.png');
+
+
+INSERT INTO `#__CBUSeries` (`Id`,`SeriesName`, `ImagePath`, `Description`) VALUES
+(31,'Making the Most of Your 403(b)','http://lorempixel.com/600/337', 'In this series, P&B Director Don Walter explains how to make the most of your Nazarene 403(b) Retirement Savings Plan.');
+
+INSERT INTO `#__CBULessons` (`Id`, `Title`, `SeriesId`, `CategoryId`, `ContentTypeId`, `ImagePath`, `SourceCredit`, `Content`, `Description`, `DatePublished`, `SeriesOrder`) VALUES
+(84, 'The Least You Should Know', NULL, 5, 1, 'http://placekitten.com/600/337', '', 'https://www.brainshark.com/pbusa/least-you-should-know', 'Hear from P&B director, Don Walter on the LEAST you should know.', '2016-05-18', 0),
+(85, 'Basic Long Term Disability FAQs', NULL, 12, 1, 'http://placekitten.com/600/337', '', 'https://www.brainshark.com/pbusa/bltd-faq', 'Frequently Asked Questions about Basic Long Term Disability Coverage.', '2016-05-18', 0),
+(88, 'Why use the Nazarene 403(b)?', 31, 12, 1, '/images/pbacademy/lessons/making your 403b work part 1.jpg', '', 'https://www.brainshark.com/pbusa/making-most-of-403b-pt1', 'Part 1 in the "Making the Most of Your 403(b)" series', '2016-05-18', 7),
+(89, 'How Should You Invest?', 31, 12, 1, '/images/pbacademy/lessons/making your 403b work part 2.jpg', '', 'https://www.brainshark.com/pbusa/making-most-of-403b-pt2', 'Part 2 in the series "Making the Most of your 403(b)"', '2016-05-18', 10),
+(90, 'Finding the Funds', 31, 12, 1, '/images/pbacademy/lessons/making your 403b work part 3.jpg', '', 'https://www.brainshark.com/pbusa/making-most-of-403b-pt3', 'Part 3 in the series "Making the Most of Your 403(b)"', '2016-05-18', 12),
+(91, 'Staying Engaged in the Process', 31, 12, 1, '/images/pbacademy/lessons/making your 403b work part 4.jpg', '', 'https://www.brainshark.com/pbusa/making-most-of-403b-pt4', 'Part 4 in the series "Making the Most of your 403(b)"', '2016-05-18', 23),
+(92, 'Actions Steps to take Today', 31, 12, 1, '/images/pbacademy/lessons/making your 403b work part 5.jpg', '', 'https://www.brainshark.com/pbusa/making-most-of-403b-pt5', 'The fifth and final part of the series "Making the most of your 403(b)."', '2016-05-18', 25);

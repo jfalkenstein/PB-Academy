@@ -1,8 +1,10 @@
 <?php
 
 /**
- * Description of LessonSeries
- *
+ * A lesson may, or may not, exist within a series. Lessons in a series have a specific
+ * position within the series. This position is determined by the Lessons's seriesOrder
+ * property, but its position is ULTIMATELY decided by the series itself using its sorting
+ * algorithms.
  * @author jfalkenstein
  */
 class LessonSeries {
@@ -25,14 +27,25 @@ class LessonSeries {
     public function LessonCount($publishedOnly = true){
         return count($this->GetLessons($publishedOnly));
     }
+    
+    /**
+     * This obtains the lessons for this series. However, beyond simple retrieval,
+     * this method also sorts them into their rightful position.
+     * @param bool $publishedOnly Determines whether it includes unpublished lessons.
+     * @return Lesson[]
+     */
     public function GetLessons($publishedOnly = true){
         $mgr = PBAcademyManager::GetInstance();
-        if(is_null($this->lessons)){
+        if(is_null($this->lessons)){ //If there is currently no store of lessons...
+            //Get the lessons from the DB
             $lessons = $mgr->GetRepo()->Lessons->GetLessonsForSeries($this->Id, false);
+            //Sort the lessons inot thier rightful order
             $this->sortLessions($lessons);
+            //Store these lessons.
             $this->lessons = $lessons;
         }
-        if($publishedOnly){
+        if($publishedOnly){//If $publishedOnly is true...
+            //Filter out unpublished lessons and then return the filtered list.
             return array_filter($this->lessons, function($val){
                     return $val->Published;             
                 }
@@ -41,6 +54,10 @@ class LessonSeries {
         return $this->lessons;
     }
     
+    /**
+     * Sorts Lessons first by seriesOrder and then by datePublished.
+     * @param array $array
+     */
     private function sortLessions(array &$array){
         usort($array, function($a, $b){
             /* @var $a Lesson */
@@ -73,6 +90,11 @@ class LessonSeries {
         });
     }
     
+    /**
+     * Creates an index for lessons. The index key is the Id of the lesson.
+     * The value is the position of the lesson in the series.
+     * @param bool $publishedOnly determines whether or not to include unpublished lessons.
+     */
     private function setIndex($publishedOnly){
         $index = [];
         $this->indexIsPublishedOnly = $publishedOnly;
@@ -83,6 +105,11 @@ class LessonSeries {
         $this->index = $index;
     }
     
+    /**
+     * Obtains the lesson index.
+     * @param bool $publishedOnly Whether or not the index should be for all or only published lessons.
+     * @return Lesson[]
+     */
     private function getIndex($publishedOnly){
         if(is_null($this->index) || $publishedOnly !== $this->indexIsPublishedOnly){
             $this->setIndex($publishedOnly);
@@ -90,6 +117,13 @@ class LessonSeries {
         return $this->index;
     }
     
+    /**
+     * Gets the true position of a lesson in the series.
+     * @param Lesson $lesson
+     * @param value $default This is the value that should be returned if the lesson ISN'T in this series.
+     * @param type $publishedOnly Whether or not to include unpublished lessons.
+     * @return int
+     */
     public function GetLessonPosition(Lesson $lesson, $default = null, $publishedOnly = true){
         if($lesson->Series->Id === $this->Id){
             return $this->getIndex($publishedOnly)[$lesson->Id];
@@ -98,6 +132,12 @@ class LessonSeries {
         }            
     }
     
+    /**
+     * Obtains the next lesson in the series from the lesson passed in.
+     * @param Lesson $currentLesson
+     * @param value $default The value to be returned if there is no next lesson.
+     * @return type
+     */
     public function GetNextLesson(Lesson $currentLesson, $default = null){
         $pos = $this->GetLessonPosition($currentLesson) + 1;
         if(!is_null($pos) && array_key_exists($pos, $this->lessons)){
@@ -105,6 +145,13 @@ class LessonSeries {
         }
         return $default;
     }
+    
+    /**
+     * Obtains the previous lesson in the series from the lesson passed in.
+     * @param Lesson $currentLesson
+     * @param value $default The value to be returned if there is no previous lesson.
+     * @return type
+     */
     public function GetPrevLesson(Lesson $currentLesson, $default = null){
         $pos = $this->GetLessonPosition($currentLesson) - 1;
         if(!is_null($pos) && array_key_exists($pos, $this->lessons)){
@@ -113,6 +160,10 @@ class LessonSeries {
         return $default;
     }
     
+    /**
+     * Obtains the link to this series.
+     * @return string
+     */
     public function GetLink(){
         return UrlMaker::Series($this->Id);
     }

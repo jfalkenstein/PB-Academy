@@ -1,15 +1,11 @@
 <?php
 
 /**
- * Description of view
- *
+ * The view for all categories.
  * @author jfalkenstein
  */
 class PbAcademyViewCategories extends BaseViewMaster implements IAllCategoriesView, INavBarView {
     
-    public function display($tpl = null) {
-        parent::display($tpl);
-    }
     public function setCategories() {
         $this->Categories = $this->get('Categories','categories');
     }
