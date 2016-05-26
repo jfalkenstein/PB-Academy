@@ -1,8 +1,9 @@
 <?php
 
 /**
- * Description of ContentTypesRepository
- *
+ * This is the repository for Content Types.
+ * Because there are not many content types, all types will be returned and then
+ * they will be filtered as needed higher up the chain.
  * @author jfalkenstein
  */
 class ContentTypesRepository extends BaseJoomlaRepository implements IContentTypesRepository {
