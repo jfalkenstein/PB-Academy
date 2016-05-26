@@ -1,13 +1,17 @@
 <?php
 
 /**
- * Description of controller
+ * This is the main  admin controller, required by the Joomla API.
+ * The function of the controller is to select the appropriate model and view
+ * based upon GET and POST data. Then it will connect the model to said view,
+ * then display the view.
  *
  * @author jfalkenstein
  */
 class PbAcademyController extends JControllerLegacy
 {
     private $configArray;
+    
     public function adminHome(){
         $this->configArray['viewName'] = 'adminHome';
         $adminHome = $this->getNamedView('adminHome');
