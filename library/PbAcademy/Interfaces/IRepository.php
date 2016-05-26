@@ -1,7 +1,7 @@
 <?php
 
 /**
- *
+ * These are the required repository functions.
  * @author jfalkenstein
  */
 interface IRepository {
