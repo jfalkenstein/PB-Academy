@@ -102,14 +102,9 @@ class PBAcademyManager {
         try{
             $newCat = new Category($name, $description,null,$imagePath);
             $success = $this->repo->Categories->Save($newCat);
-            if($success){
-                $this->ErrorMessages[] = 'There was an error creating the category '
-                        . 'named ' . $name;
-            }
             $this->loadAllCategories();
             return $success;
         } catch (Exception $ex) {
-            $this->ErrorMessages[] = $ex->getMessage();
             return false;
         }
     }
@@ -121,13 +116,9 @@ class PBAcademyManager {
      * @throws Exception
      */
     public function DeleteCategory($catId){
-        try{
-            $success = $this->repo->Categories->Delete($catId);
-            if(!$success){
-                throw new Exception('There was a problem deleting the category.');
-            }
-        } catch (Exception $ex) {
-            $this->ErrorMessages[] = $ex->getMessage();
+        $success = $this->repo->Categories->Delete($catId);
+        if(!$success){
+            throw new Exception('There was a problem deleting the category.');
         }
         $this->loadAllCategories();
     }
@@ -145,7 +136,6 @@ class PBAcademyManager {
         /* @var $oldCat Category */
         $success = false;
         if(is_null($oldCat)){
-            $this->ErrorMessages[] = 'Unable to locate the category with the id of ' . $id;
             return false;
         }else{
             $oldCat->Name = (($name) ? $name : $oldCat->Name);
@@ -231,9 +221,6 @@ class PBAcademyManager {
                 $seriesOrder,
                 $published);
         $success = $this->repo->Lessons->Save($les);
-        if(!$success){
-            $this->ErrorMessages[] = 'There was a problem saving the new lesson.';
-        }
         return $success;
     }
     
@@ -295,9 +282,6 @@ class PBAcademyManager {
      */
     public function DeleteLesson($id){
         $success = $this->repo->Lessons->Delete($id);
-        if(!$success){
-            $this->ErrorMessages[] = 'Lesson with id of ' . $id . ' was not able to be deleted.';
-        }
         return $success;
     }
     
@@ -312,6 +296,12 @@ class PBAcademyManager {
         return $this->allSeries;
     }
     
+    /**
+     * Obtains an individual series by id. Returns $default if it cannot be located.
+     * @param int $id
+     * @param value $default The value to return if the series cannot be located.
+     * @return LessonSeries
+     */
     public function GetSeries($id, $default = null){
         $series = $this->GetAllSeries();    
         if(is_null($id)) return $default;
@@ -319,21 +309,32 @@ class PBAcademyManager {
         return $this->repo->Series->GetById($id,$default);
     }
     
+    /**
+     * Creates and saves a new series to the Repo. Returns a success Boolean.
+     * @param string $seriesName
+     * @param string $imagePath
+     * @param string $description
+     * @return boolean
+     */
     public function CreateSeries($seriesName, $imagePath = null, $description = null){
         $series = new LessonSeries($seriesName, $imagePath,null, $description);
         $success = $this->repo->Series->Save($series);
-        if(!$success){
-            $this->ErrorMessages[] = 'There was a problem saving the new lesson series.';
-        }
         $this->loadAllSeries();
         return $success;
     }
     
+    /**
+     * Updates an already existing series and returns a success Boolean.
+     * @param int $id
+     * @param string $name
+     * @param string $description
+     * @param string $imagePath
+     * @return boolean
+     */
     public function UpdateSeries($id, $name=null, $description = null, $imagePath = null){
         $oldSeries = $this->repo->Series->GetById($id);
         /* @var $oldSeries LessonSeries */
         if(is_null($oldSeries)){
-            $this->ErrorMessages[] = 'Unable to locate the series with the id of ' . $id;
             return false;
         }
         $oldSeries->SeriesName = (($name) ? $name : $oldSeries->SeriesName);
@@ -344,18 +345,27 @@ class PBAcademyManager {
         return $success;
     }
     
+    /**
+     * Deletes a series and returns a success boolean.
+     * @param type $id
+     * @return type
+     */
     public function DeleteSeries($id){
         $success = $this->repo->Series->Delete($id);
-        if(!$success){
-            $this->ErrorMessages[] = 'Series with id of ' . $id . ' was not able to be deleted.';
-        }
         return $success;
     }
 
+    /**
+     * Loads all series into memory.
+     */
     private function loadAllSeries(){
         $this->allSeries = $this->repo->Series->GetAllSeries();
     }
     
+    /**
+     * Returns an array of all contentTypes.
+     * @return ContentType[]
+     */
     public function GetContentTypes(){
         if(count($this->allContentTypes) === 0){
             $this->allContentTypes = $this->repo->ContentTypes->GetAll();
@@ -363,18 +373,25 @@ class PBAcademyManager {
         return $this->allContentTypes;
     }
     
+    /**
+     * Gets a specific content type by Id. Returns default if it cannot find it.
+     * @param int $id
+     * @param value $default
+     * @return ContentType
+     */
     public function GetContentTypeById($id, $default = null){
         $cts = $this->GetContentTypes();
         if(isset($cts[$id])) return $cts[$id];
         return $default;
     }
     
-    public function GetContentTypeByName($name, $default = null){
-        $name = strtolower($name);
-        $cts = $this->GetContentTypes();
-        foreach($cts as $ct){
-            if(strtolower($ct->Name) === $name) return $ct;
-        }
-        return $default;
-    }    
+    
+//    public function GetContentTypeByName($name, $default = null){
+//        $name = strtolower($name);
+//        $cts = $this->GetContentTypes();
+//        foreach($cts as $ct){
+//            if(strtolower($ct->Name) === $name) return $ct;
+//        }
+//        return $default;
+//    }    
 }

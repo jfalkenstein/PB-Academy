@@ -1,7 +1,11 @@
 <?php
 require_once 'Requires/repos.php';
 /**
- * Description of RepoMapRegistry
+ * This Registry creates a repository registry to map actual repositories to their
+ * respective interfaces. This allows for easier abstraction and less reliance upon
+ * Joomla's db api.
+ * 
+ * NOTE: THIS NEEDS TO BE CONVERTED TO AN IOC CONTAINER
  * 
  * @author jfalkenstein
  * @property RepoMapRegistry $instance

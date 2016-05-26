@@ -1,8 +1,9 @@
 <?php
 
 /**
- * Description of AdminUrlMaker
- *
+ * This class, composed entirely of static methods, holds exclusive domain over creating
+ * the admin urls. Methods throughout the admin side of the component call these methods.
+ * Adjusting any of the return values here will change it system-wide.
  * @author jfalkenstein
  */
 class AdminUrlMaker {
