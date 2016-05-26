@@ -1,7 +1,7 @@
 <?php
 
 /**
- *
+ * This interface allows the AllSeries view to be used.
  * @author jfalkenstein
  */
 interface IAllSeriesView{

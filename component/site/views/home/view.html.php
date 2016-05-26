@@ -1,16 +1,13 @@
 <?php
 
 /**
- * Description of view
+ * The view for the PB Academy homepage.
  *
  * @author jfalkenstein
  */
 class PbAcademyViewHome extends BaseViewMaster implements IRecentLessonsView, IAllCategoriesView
 {
     
-    public function display($tpl = null) {
-        parent::display();
-    }    
     public function setCategories() {
         $this->Categories = $this->get('Categories','home');
     }

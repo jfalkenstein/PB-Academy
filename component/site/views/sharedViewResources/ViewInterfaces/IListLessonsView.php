@@ -1,7 +1,7 @@
 <?php
 
 /**
- *
+ * This allows the ListLessons interface to be used.
  * @author jfalkenstein
  */
 interface IListLessonsView {

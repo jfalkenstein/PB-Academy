@@ -1,3 +1,9 @@
+<?php
+/*
+ * This is the main page framework that the rest of the PB Academy front end fits
+ * into. It includes the menu, the given "MainBodyInclude" and the NavBar.
+ */
+?>
 <div class="wholePage">
     <h1 id="pbTitle">P&B Academy</h1>
     <div class="leftMenu">
