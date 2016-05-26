@@ -1,5 +1,5 @@
 <?php
-
+//Load the libraries and interfaces.
 require_once PB_ACADEMY_LIB . '/PBAcademyManager.php';
 require_once __DIR__ . '/ModelInterfaces/IRecentLessonsModel.php';
 
