@@ -1,15 +1,28 @@
 <?php
 
 /**
- * Description of LessonEmbedder
- *
+ * This class consists entirely of static methods. It functions to create a lesson's
+ * embed code in html format.
  * @author jfalkenstein
  */
 class LessonEmbedder{
     
+    /**
+     * Provides a preview of a lesson when the contentType, content, and imagePath
+     * are known, but the lesson hasn't been created yet. Used in the admin panel.
+     * @param int $contentTypeId
+     * @param string $content
+     * @param string $imagePath
+     * @return string
+     */
     public static function GetPreview($contentTypeId, $content, $imagePath){
         return self::switchOnId($contentTypeId, $content, $imagePath);
     }
+    /**
+     * Returns the embed code for the lesson.
+     * @param Lesson $lesson
+     * @return string
+     */
     public static function EmbedLesson(Lesson $lesson){
         $content = $lesson->Content;
         $imagePath = $lesson->ImagePath;
@@ -17,11 +30,18 @@ class LessonEmbedder{
         return self::switchOnId($ctId, $content, $imagePath);
     }
     
+    /**
+     * Switches on the contentType id and returns the embed string that corresponds to it.
+     * @param int $ctId
+     * @param string $content
+     * @param string $imagePath
+     * @return string
+     */
     private static function switchOnId($ctId, $content, $imagePath){
         switch($ctId){
             case 1: //BrainShark -> Create embed code from brainshark Id
                 return LessonEmbedder::BrainShark($content);
-            case 2: //GenericVideo -> insert(or create?) embed code from content
+            case 2: //GenericVideo -> insert embed code from content
                 return LessonEmbedder::GenericVideo($content);
             case 3: //Download -> Create image of document that links to a file on our server
                 return LessonEmbedder::DownloadLink($content, $imagePath);                
@@ -38,6 +58,11 @@ class LessonEmbedder{
         }
     }
     
+    /**
+     * Embeds raw html content, but strips out any script tags.
+     * @param type $htmlContent
+     * @return string
+     */
     public static function Html($htmlContent){
         $dom = new DOMDocument();
         $dom->loadHTML($htmlContent);
@@ -91,6 +116,11 @@ class LessonEmbedder{
         return $code;
     }
     
+    /**
+     * This uses Youtube's api to embed a youtube video.
+     * @param type $YouTubeURL
+     * @return string
+     */
     public static function Youtube($YouTubeURL){
         $width = 640;
         $height = 390;
@@ -123,6 +153,7 @@ class LessonEmbedder{
         }
     }
     
+    //Uses a regex pattern to obtain the youtube ID from a url.
     private static function extractYouTubeId($YouTubeURL){
         $pattern = 
             '%^             # Match any youtube URL
@@ -146,6 +177,11 @@ class LessonEmbedder{
         return false;
     }
     
+    /**
+     * Embeds a video from the Nazarene media library.
+     * @param string $url
+     * @return string
+     */
     public static function NazMediaLibrary($url){
         $height = 225;
         $width = 400;
@@ -161,6 +197,12 @@ class LessonEmbedder{
         return $code;
     }
     
+    /**
+     * Links to a file on our website and presents it with an icon and a download link.
+     * @param string $link
+     * @param string $imgPath
+     * @return string
+     */
     public static function DownloadLink($link, $imgPath){
         $imagePath = self::getDocIcon($link);
         $code = '<div class="documentEmbed">'
@@ -174,6 +216,12 @@ class LessonEmbedder{
         return $code;
     }
     
+    /**
+     * Selects an icon for one of a variety of popular document types. There is also
+     * a default icon for others.     * 
+     * @param string $link The file
+     * @return string
+     */
     private static function getDocIcon($link){
         $extension = pathinfo($link,PATHINFO_EXTENSION);
         $imagePath = '/components/com_pbacademy/images/icons/';
@@ -201,6 +249,11 @@ class LessonEmbedder{
         
     }
     
+    /**
+     * Creates an iFrame to hold embed the webpage.
+     * @param string $url
+     * @return string
+     */
     public static function UrlIframe($url){
         $code = '<div id="urlEmbed">'
                 .  '<iframe '
