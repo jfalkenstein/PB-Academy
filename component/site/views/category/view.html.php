@@ -50,7 +50,7 @@ class PbAcademyViewCategory extends BaseViewMaster implements INavBarView, IList
     }
 
     public function ShowSeriesPositionInTitle() {
-        return true;
+        return false;
     }
 
 }
